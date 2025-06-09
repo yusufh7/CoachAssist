@@ -42,11 +42,11 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Hero Section with Football Background */}
+      {/* Hero Section with Football Coaching Background */}
       <section 
         className="relative bg-cover bg-center bg-no-repeat py-16 md:py-24"
         style={{
-          backgroundImage: `linear-gradient(rgba(34, 197, 94, 0.85), rgba(34, 197, 94, 0.85)), url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI2MDAiIHZpZXdCb3g9IjAgMCAxMDAwIDYwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPCEtLSBHcmFzcyBQYXR0ZXJuIC0tPgo8ZGVmcz4KICA8cGF0dGVybiBpZD0iZ3Jhc3MiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CiAgICA8cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiMyMmM1NWUiLz4KICAgIDxwYXRoIGQ9Ik0wIDQwTDQwIDIwTDQwIDQwWiIgZmlsbD0iIzE2YTA0OSIvPgogICAgPHBhdGggZD0iTTAgMEw0MCAyMEwwIDIwWiIgZmlsbD0iIzE2YTA0OSIvPgogIDwvcGF0dGVybj4KPC9kZWZzPgo8cmVjdCB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9InVybCgjZ3Jhc3MpIi8+CjwhLS0gRm9vdGJhbGwgLS0+CjxjaXJjbGUgY3g9IjUwMCIgY3k9IjMwMCIgcj0iNjAiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik00NDAgMzAwTDU2MCAzMDBNNTAwIDI0MFA1MDAgMzYwIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPgo8cGF0aCBkPSJNNDcwIDI3MEw1MzAgMjcwTTQ3MCAzMzBMNTMwIDMzME00NzAgMjUwTDUzMCAyNTBNNDcwIDM1MEw1MzAgMzUwIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4=')`,
+          backgroundImage: `linear-gradient(rgba(34, 197, 94, 0.8), rgba(34, 197, 94, 0.8)), url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1993&q=80')`,
         }}
       >
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
