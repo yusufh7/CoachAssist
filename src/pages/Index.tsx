@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import TeamSetup from '@/components/TeamSetup';
 import SessionPlanner from '@/components/SessionPlanner';
+import PracticeLibrary from '@/components/PracticeLibrary';
+import AccountPage from '@/components/AccountPage';
 import { Users, Target, PlayCircle, FileText, Award, Zap, Shield } from 'lucide-react';
 
 const Index = () => {
@@ -23,6 +25,14 @@ const Index = () => {
     return <SessionPlanner teamData={teamData} onBack={() => setCurrentView('dashboard')} />;
   }
 
+  if (currentView === 'practice-library') {
+    return <PracticeLibrary onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'account') {
+    return <AccountPage onBack={() => setCurrentView('dashboard')} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
       {/* Header */}
@@ -35,10 +45,13 @@ const Index = () => {
               </div>
               <h1 className="text-xl font-bold text-gray-900">CoachAssist</h1>
             </div>
-            <div className="text-sm text-gray-600 text-center">
-              <div className="font-medium">AI-Powered Football Training Planner</div>
-              <div className="text-xs text-green-600 font-semibold">Built by UEFA-Qualified Coaches</div>
-            </div>
+            <Button 
+              onClick={() => setCurrentView('account')}
+              variant="outline"
+              className="hover:bg-green-50 border-green-200"
+            >
+              My Account
+            </Button>
           </div>
         </div>
       </header>
@@ -96,7 +109,10 @@ const Index = () => {
             </CardHeader>
           </Card>
 
-          <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50 opacity-75">
+          <Card 
+            className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50" 
+            onClick={() => setCurrentView('practice-library')}
+          >
             <CardHeader className="text-center pb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
                 <PlayCircle className="w-6 h-6 text-white" />
