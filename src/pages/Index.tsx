@@ -81,97 +81,104 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-green-200 bg-gradient-to-br from-white to-green-50" onClick={() => setCurrentView('team-setup')}>
-            <CardHeader className="text-center pb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-lg text-gray-800">New Session</CardTitle>
-              <CardDescription className="text-gray-600">
-                Set up your team and create a training session
-              </CardDescription>
-            </CardHeader>
-          </Card>
+      {/* Main Content with Background */}
+      <main 
+        className="relative bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`,
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-green-200 bg-gradient-to-br from-white to-green-50" onClick={() => setCurrentView('team-setup')}>
+              <CardHeader className="text-center pb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <CardTitle className="text-lg text-gray-800">New Session</CardTitle>
+                <CardDescription className="text-gray-600">
+                  Set up your team and create a training session
+                </CardDescription>
+              </CardHeader>
+            </Card>
 
-          <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-blue-200 bg-gradient-to-br from-white to-blue-50 opacity-75">
-            <CardHeader className="text-center pb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-lg text-gray-800">Saved Templates</CardTitle>
-              <CardDescription className="text-gray-600">
-                Access your favourite session templates
-              </CardDescription>
-            </CardHeader>
-          </Card>
+            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-blue-200 bg-gradient-to-br from-white to-blue-50 opacity-75">
+              <CardHeader className="text-center pb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                <CardTitle className="text-lg text-gray-800">Saved Templates</CardTitle>
+                <CardDescription className="text-gray-600">
+                  Access your favourite session templates
+                </CardDescription>
+              </CardHeader>
+            </Card>
 
-          <Card 
-            className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50" 
-            onClick={() => setCurrentView('practice-library')}
-          >
-            <CardHeader className="text-center pb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                <PlayCircle className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-lg text-gray-800">Practice Library</CardTitle>
-              <CardDescription className="text-gray-600">
-                Browse hundreds of coaching practices
-              </CardDescription>
-            </CardHeader>
-          </Card>
+            <Card 
+              className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50" 
+              onClick={() => setCurrentView('practice-library')}
+            >
+              <CardHeader className="text-center pb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+                  <PlayCircle className="w-6 h-6 text-white" />
+                </div>
+                <CardTitle className="text-lg text-gray-800">Practice Library</CardTitle>
+                <CardDescription className="text-gray-600">
+                  Browse hundreds of coaching practices
+                </CardDescription>
+              </CardHeader>
+            </Card>
 
-          <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-orange-200 bg-gradient-to-br from-white to-orange-50 opacity-75">
-            <CardHeader className="text-center pb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-lg text-gray-800">Recent Sessions</CardTitle>
-              <CardDescription className="text-gray-600">
-                View and edit previous session plans
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
-
-        {/* Features Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <div className="text-center mb-8">
-            <h3 className="text-3xl font-bold text-gray-900 mb-3">
-              Why Choose CoachAssist?
-            </h3>
-            <p className="text-gray-600 text-lg">Built by UEFA-qualified coaches for coaches at every level</p>
+            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-orange-200 bg-gradient-to-br from-white to-orange-50 opacity-75">
+              <CardHeader className="text-center pb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+                <CardTitle className="text-lg text-gray-800">Recent Sessions</CardTitle>
+                <CardDescription className="text-gray-600">
+                  View and edit previous session plans
+                </CardDescription>
+              </CardHeader>
+            </Card>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
-                <Award className="w-8 h-8 text-green-600" />
-              </div>
-              <h4 className="text-xl font-semibold mb-3 text-gray-800">UEFA-Qualified Expertise</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Developed by UEFA-qualified coaches following proven coaching principles and FA guidelines
-              </p>
+
+          {/* Features Section */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-gray-100">
+            <div className="text-center mb-8">
+              <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                Why Choose CoachAssist?
+              </h3>
+              <p className="text-gray-600 text-lg">Built by UEFA-qualified coaches for coaches at every level</p>
             </div>
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
-                <Zap className="w-8 h-8 text-blue-600" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center group">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
+                  <Award className="w-8 h-8 text-green-600" />
+                </div>
+                <h4 className="text-xl font-semibold mb-3 text-gray-800">UEFA-Qualified Expertise</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  Developed by UEFA-qualified coaches following proven coaching principles and FA guidelines
+                </p>
               </div>
-              <h4 className="text-xl font-semibold mb-3 text-gray-800">Visual Practice Diagrams</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Clear animations and diagrams for every practice and drill to enhance understanding
-              </p>
-            </div>
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
-                <Shield className="w-8 h-8 text-purple-600" />
+              <div className="text-center group">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
+                  <Zap className="w-8 h-8 text-blue-600" />
+                </div>
+                <h4 className="text-xl font-semibold mb-3 text-gray-800">Visual Practice Diagrams</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  Clear animations and diagrams for every practice and drill to enhance understanding
+                </p>
               </div>
-              <h4 className="text-xl font-semibold mb-3 text-gray-800">Adaptive Content</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Intelligently tailored for every age group and skill level from grassroots to academy
-              </p>
+              <div className="text-center group">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
+                  <Shield className="w-8 h-8 text-purple-600" />
+                </div>
+                <h4 className="text-xl font-semibold mb-3 text-gray-800">Adaptive Content</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  Intelligently tailored for every age group and skill level from grassroots to academy
+                </p>
+              </div>
             </div>
           </div>
         </div>
