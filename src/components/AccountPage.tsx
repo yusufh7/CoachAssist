@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, User, Save, Clock, Settings, Plus } from 'lucide-react';
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, User, Save, Clock, Settings, Plus, Eye, EyeOff } from 'lucide-react';
 
 const AccountPage = ({ onBack }) => {
   const [user, setUser] = useState({
@@ -43,6 +45,43 @@ const AccountPage = ({ onBack }) => {
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [signUpData, setSignUpData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    qualifications: ''
+  });
+
+  const validatePassword = (password) => {
+    const minLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    return {
+      minLength,
+      hasUpperCase,
+      hasLowerCase,
+      hasNumbers,
+      hasSpecialChar,
+      isValid: minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar
+    };
+  };
+
+  const passwordValidation = validatePassword(signUpData.password);
+  const passwordsMatch = signUpData.password === signUpData.confirmPassword;
+
+  const handleSignUpSubmit = (e) => {
+    e.preventDefault();
+    if (passwordValidation.isValid && passwordsMatch) {
+      console.log('Account created successfully');
+      setIsSignUpModalOpen(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
@@ -83,12 +122,12 @@ const AccountPage = ({ onBack }) => {
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                      <input type="email" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                      <Label htmlFor="login-email" className="text-sm font-medium text-gray-700">Email</Label>
+                      <Input id="login-email" type="email" className="mt-1" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                      <input type="password" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                      <Label htmlFor="login-password" className="text-sm font-medium text-gray-700">Password</Label>
+                      <Input id="login-password" type="password" className="mt-1" />
                     </div>
                     <Button className="w-full bg-green-500 hover:bg-green-600">Login</Button>
                   </div>
@@ -99,32 +138,131 @@ const AccountPage = ({ onBack }) => {
                 <DialogTrigger asChild>
                   <Button className="bg-green-500 hover:bg-green-600 px-8">Sign Up</Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-md">
                   <DialogHeader>
                     <DialogTitle>Create Your Account</DialogTitle>
                     <DialogDescription>
                       Join thousands of coaches using CoachAssist
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-4">
+                  <form onSubmit={handleSignUpSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                      <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                      <Label htmlFor="signup-name" className="text-sm font-medium text-gray-700">Full Name</Label>
+                      <Input 
+                        id="signup-name"
+                        type="text" 
+                        value={signUpData.name}
+                        onChange={(e) => setSignUpData({...signUpData, name: e.target.value})}
+                        className="mt-1"
+                        required
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                      <input type="email" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                      <Label htmlFor="signup-email" className="text-sm font-medium text-gray-700">Email</Label>
+                      <Input 
+                        id="signup-email"
+                        type="email" 
+                        value={signUpData.email}
+                        onChange={(e) => setSignUpData({...signUpData, email: e.target.value})}
+                        className="mt-1"
+                        required
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                      <input type="password" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                      <Label htmlFor="signup-password" className="text-sm font-medium text-gray-700">Password</Label>
+                      <div className="relative mt-1">
+                        <Input 
+                          id="signup-password"
+                          type={showPassword ? "text" : "password"} 
+                          value={signUpData.password}
+                          onChange={(e) => setSignUpData({...signUpData, password: e.target.value})}
+                          className="pr-10"
+                          required
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                      {signUpData.password && (
+                        <div className="mt-2 space-y-1 text-xs">
+                          <div className={`flex items-center ${passwordValidation.minLength ? 'text-green-600' : 'text-red-600'}`}>
+                            <span className="mr-2">{passwordValidation.minLength ? '✓' : '✗'}</span>
+                            At least 8 characters
+                          </div>
+                          <div className={`flex items-center ${passwordValidation.hasUpperCase ? 'text-green-600' : 'text-red-600'}`}>
+                            <span className="mr-2">{passwordValidation.hasUpperCase ? '✓' : '✗'}</span>
+                            One uppercase letter
+                          </div>
+                          <div className={`flex items-center ${passwordValidation.hasLowerCase ? 'text-green-600' : 'text-red-600'}`}>
+                            <span className="mr-2">{passwordValidation.hasLowerCase ? '✓' : '✗'}</span>
+                            One lowercase letter
+                          </div>
+                          <div className={`flex items-center ${passwordValidation.hasNumbers ? 'text-green-600' : 'text-red-600'}`}>
+                            <span className="mr-2">{passwordValidation.hasNumbers ? '✓' : '✗'}</span>
+                            One number
+                          </div>
+                          <div className={`flex items-center ${passwordValidation.hasSpecialChar ? 'text-green-600' : 'text-red-600'}`}>
+                            <span className="mr-2">{passwordValidation.hasSpecialChar ? '✓' : '✗'}</span>
+                            One special character
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Coaching Qualifications (Optional)</label>
-                      <input type="text" placeholder="e.g. UEFA B License" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                      <Label htmlFor="signup-confirm-password" className="text-sm font-medium text-gray-700">Confirm Password</Label>
+                      <div className="relative mt-1">
+                        <Input 
+                          id="signup-confirm-password"
+                          type={showConfirmPassword ? "text" : "password"} 
+                          value={signUpData.confirmPassword}
+                          onChange={(e) => setSignUpData({...signUpData, confirmPassword: e.target.value})}
+                          className="pr-10"
+                          required
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                      {signUpData.confirmPassword && (
+                        <div className="mt-1 text-xs">
+                          <div className={`flex items-center ${passwordsMatch ? 'text-green-600' : 'text-red-600'}`}>
+                            <span className="mr-2">{passwordsMatch ? '✓' : '✗'}</span>
+                            Passwords match
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <Button className="w-full bg-green-500 hover:bg-green-600">Create Account</Button>
-                  </div>
+                    <div>
+                      <Label htmlFor="signup-qualifications" className="text-sm font-medium text-gray-700">Coaching Qualifications (Optional)</Label>
+                      <Input 
+                        id="signup-qualifications"
+                        type="text" 
+                        placeholder="e.g. UEFA B License"
+                        value={signUpData.qualifications}
+                        onChange={(e) => setSignUpData({...signUpData, qualifications: e.target.value})}
+                        className="mt-1"
+                      />
+                    </div>
+                    <Button 
+                      type="submit"
+                      className="w-full bg-green-500 hover:bg-green-600"
+                      disabled={!passwordValidation.isValid || !passwordsMatch}
+                    >
+                      Create Account
+                    </Button>
+                  </form>
                 </DialogContent>
               </Dialog>
             </div>
@@ -206,38 +344,42 @@ const AccountPage = ({ onBack }) => {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                    <input 
+                    <Label htmlFor="profile-name" className="text-sm font-medium text-gray-700">Full Name</Label>
+                    <Input 
+                      id="profile-name"
                       type="text" 
                       value={user.name}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="mt-1"
                       disabled
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input 
+                    <Label htmlFor="profile-email" className="text-sm font-medium text-gray-700">Email</Label>
+                    <Input 
+                      id="profile-email"
                       type="email" 
                       value={user.email}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="mt-1"
                       disabled
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Qualifications</label>
-                    <input 
+                    <Label htmlFor="profile-qualifications" className="text-sm font-medium text-gray-700">Qualifications</Label>
+                    <Input 
+                      id="profile-qualifications"
                       type="text" 
                       value={user.qualifications}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="mt-1"
                       disabled
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Club/Organization</label>
-                    <input 
+                    <Label htmlFor="profile-club" className="text-sm font-medium text-gray-700">Club/Organization</Label>
+                    <Input 
+                      id="profile-club"
                       type="text" 
                       value={user.club}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="mt-1"
                       disabled
                     />
                   </div>
