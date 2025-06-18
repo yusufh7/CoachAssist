@@ -46,6 +46,70 @@ const PracticeLibrary = ({ onBack }) => {
           duration: '20-25 mins',
           players: '8-14',
           difficulty: 'Intermediate'
+        },
+        {
+          id: 5,
+          title: 'Combination Play',
+          description: 'Quick passing combinations in tight spaces',
+          duration: '15-20 mins',
+          players: '6-10',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 6,
+          title: 'Crossing & Finishing',
+          description: 'Creating and converting crossing opportunities',
+          duration: '20-25 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 7,
+          title: 'Build-Up Play',
+          description: 'Playing out from the back through defensive pressure',
+          duration: '25-30 mins',
+          players: '12-20',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 8,
+          title: 'Quick Play Tempo',
+          description: 'Increasing pace of play to unbalance opponents',
+          duration: '15-20 mins',
+          players: '8-12',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 9,
+          title: 'Creating Overloads',
+          description: 'Numerical advantages in different areas of the pitch',
+          duration: '20-25 mins',
+          players: '10-16',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 10,
+          title: 'Switch of Play',
+          description: 'Changing the point of attack quickly',
+          duration: '15-20 mins',
+          players: '10-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 11,
+          title: 'Through Ball Execution',
+          description: 'Timing and technique for penetrating passes',
+          duration: '15-20 mins',
+          players: '6-10',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 12,
+          title: 'Creative Play',
+          description: 'Encouraging flair and individual creativity',
+          duration: '20-25 mins',
+          players: '8-12',
+          difficulty: 'Advanced'
         }
       ]
     },
@@ -55,7 +119,7 @@ const PracticeLibrary = ({ onBack }) => {
       color: 'from-red-500 to-red-600',
       practices: [
         {
-          id: 5,
+          id: 13,
           title: 'Pressure & Cover',
           description: 'Coordinated pressing to win the ball back quickly',
           duration: '15-20 mins',
@@ -63,7 +127,7 @@ const PracticeLibrary = ({ onBack }) => {
           difficulty: 'Beginner'
         },
         {
-          id: 6,
+          id: 14,
           title: 'Defensive Shape',
           description: 'Maintaining compact defensive structure',
           duration: '20-25 mins',
@@ -71,7 +135,7 @@ const PracticeLibrary = ({ onBack }) => {
           difficulty: 'Intermediate'
         },
         {
-          id: 7,
+          id: 15,
           title: 'Counter-Pressing',
           description: 'Immediate pressure after losing possession',
           duration: '25-30 mins',
@@ -79,12 +143,76 @@ const PracticeLibrary = ({ onBack }) => {
           difficulty: 'Advanced'
         },
         {
-          id: 8,
+          id: 16,
           title: 'Defensive Transitions',
           description: 'Quick transition from attack to defence',
           duration: '20-25 mins',
           players: '12-18',
           difficulty: 'Intermediate'
+        },
+        {
+          id: 17,
+          title: 'High Pressing',
+          description: 'Aggressive pressing in the final third',
+          duration: '20-25 mins',
+          players: '8-14',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 18,
+          title: 'Mid-Block Defence',
+          description: 'Defending in middle third with compact shape',
+          duration: '25-30 mins',
+          players: '12-18',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 19,
+          title: 'Low Block Defence',
+          description: 'Defending deep and staying compact',
+          duration: '20-25 mins',
+          players: '10-16',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 20,
+          title: 'Pressing Triggers',
+          description: 'Recognising when and where to press',
+          duration: '15-20 mins',
+          players: '8-12',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 21,
+          title: 'Defensive Duels',
+          description: '1v1 defending techniques and positioning',
+          duration: '15-20 mins',
+          players: '6-10',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 22,
+          title: 'Zonal Marking',
+          description: 'Defending areas rather than marking man-to-man',
+          duration: '20-25 mins',
+          players: '10-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 23,
+          title: 'Regaining Possession',
+          description: 'Winning the ball back in different areas',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 24,
+          title: 'Defensive Communication',
+          description: 'Organising and talking as a defensive unit',
+          duration: '15-20 mins',
+          players: '10-16',
+          difficulty: 'Beginner'
         }
       ]
     },
@@ -94,28 +222,84 @@ const PracticeLibrary = ({ onBack }) => {
       color: 'from-blue-500 to-blue-600',
       practices: [
         {
-          id: 9,
-          title: 'Corner Kicks',
-          description: 'Attacking and defending corner situations',
+          id: 25,
+          title: 'Corner Kicks - Attacking',
+          description: 'Attacking corner kick routines and movement',
           duration: '15-20 mins',
           players: '8-16',
           difficulty: 'Beginner'
         },
         {
-          id: 10,
-          title: 'Free Kicks',
-          description: 'Direct and indirect free kick routines',
-          duration: '20-25 mins',
+          id: 26,
+          title: 'Corner Kicks - Defending',
+          description: 'Defending corner situations effectively',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 27,
+          title: 'Free Kicks - Direct',
+          description: 'Direct free kick techniques and routines',
+          duration: '15-20 mins',
           players: '6-12',
           difficulty: 'Intermediate'
         },
         {
-          id: 11,
-          title: 'Throw-ins',
-          description: 'Effective throw-in strategies',
+          id: 28,
+          title: 'Free Kicks - Indirect',
+          description: 'Indirect free kick set plays',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 29,
+          title: 'Throw-ins - Long',
+          description: 'Long throw-in strategies and delivery',
+          duration: '10-15 mins',
+          players: '6-12',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 30,
+          title: 'Throw-ins - Short',
+          description: 'Quick throw-in combinations',
           duration: '10-15 mins',
           players: '4-8',
           difficulty: 'Beginner'
+        },
+        {
+          id: 31,
+          title: 'Penalty Taking',
+          description: 'Penalty technique and mental preparation',
+          duration: '10-15 mins',
+          players: '2-6',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 32,
+          title: 'Defensive Wall',
+          description: 'Organising and positioning defensive walls',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 33,
+          title: 'Quick Set Pieces',
+          description: 'Taking set pieces quickly to catch opponents off guard',
+          duration: '15-20 mins',
+          players: '6-12',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 34,
+          title: 'Set Piece Variations',
+          description: 'Multiple options from the same set piece situation',
+          duration: '20-25 mins',
+          players: '10-16',
+          difficulty: 'Advanced'
         }
       ]
     },
@@ -125,7 +309,7 @@ const PracticeLibrary = ({ onBack }) => {
       color: 'from-orange-500 to-orange-600',
       practices: [
         {
-          id: 12,
+          id: 35,
           title: 'Speed & Agility',
           description: 'Developing pace and quick feet',
           duration: '15-20 mins',
@@ -133,7 +317,7 @@ const PracticeLibrary = ({ onBack }) => {
           difficulty: 'All Levels'
         },
         {
-          id: 13,
+          id: 36,
           title: 'Strength & Power',
           description: 'Building functional football strength',
           duration: '20-25 mins',
@@ -141,12 +325,84 @@ const PracticeLibrary = ({ onBack }) => {
           difficulty: 'Intermediate'
         },
         {
-          id: 14,
-          title: 'Endurance',
+          id: 37,
+          title: 'Endurance Training',
           description: 'Match-specific fitness conditioning',
           duration: '25-35 mins',
           players: '10-20',
           difficulty: 'Advanced'
+        },
+        {
+          id: 38,
+          title: 'Plyometric Training',
+          description: 'Explosive power development',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 39,
+          title: 'Balance & Coordination',
+          description: 'Improving stability and body control',
+          duration: '15-20 mins',
+          players: '6-14',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 40,
+          title: 'Sprint Training',
+          description: 'Acceleration and maximum speed development',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 41,
+          title: 'Core Stability',
+          description: 'Strengthening core muscles for football',
+          duration: '15-20 mins',
+          players: '10-20',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 42,
+          title: 'Injury Prevention',
+          description: 'Exercises to reduce injury risk',
+          duration: '15-20 mins',
+          players: '10-20',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 43,
+          title: 'Flexibility & Mobility',
+          description: 'Dynamic stretching and mobility work',
+          duration: '10-15 mins',
+          players: '10-20',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 44,
+          title: 'Reaction Training',
+          description: 'Improving reaction time and decision making',
+          duration: '15-20 mins',
+          players: '6-12',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 45,
+          title: 'Football-Specific Fitness',
+          description: 'Conditioning with ball work',
+          duration: '20-30 mins',
+          players: '12-20',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 46,
+          title: 'Recovery & Regeneration',
+          description: 'Active recovery techniques',
+          duration: '15-25 mins',
+          players: '10-20',
+          difficulty: 'Beginner'
         }
       ]
     }
@@ -162,6 +418,7 @@ const PracticeLibrary = ({ onBack }) => {
       case 'Beginner': return 'bg-green-100 text-green-800';
       case 'Intermediate': return 'bg-yellow-100 text-yellow-800';
       case 'Advanced': return 'bg-red-100 text-red-800';
+      case 'All Levels': return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -213,7 +470,7 @@ const PracticeLibrary = ({ onBack }) => {
             <TabsContent key={key} value={key} className="space-y-6">
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">{category.title} Practices</h2>
-                <p className="text-gray-600">FA principles-based training practices</p>
+                <p className="text-gray-600">FA principles-based training practices ({category.practices.length} available)</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
