@@ -34,151 +34,241 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+    <div className="min-h-screen bg-gradient-surface">
       {/* Header */}
-      <header className="bg-white/90 backdrop-blur-sm shadow-sm border-b border-green-200">
+      <header className="glass border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                <PlayCircle className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between h-20">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-premium animate-pulse-glow">
+                <PlayCircle className="w-6 h-6 text-primary-foreground" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">CoachAssist</h1>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+                  CoachAssist Pro
+                </h1>
+                <p className="text-xs text-muted-foreground font-medium tracking-wide">
+                  UEFA QUALIFIED COACHING PLATFORM
+                </p>
+              </div>
             </div>
-            <Button 
-              onClick={() => setCurrentView('account')}
-              variant="outline"
-              className="hover:bg-green-50 border-green-200"
-            >
-              My Account
-            </Button>
+            <div className="flex items-center space-x-4">
+              <div className="hidden md:flex items-center space-x-2 text-sm text-muted-foreground">
+                <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                <span className="font-medium">Live Platform</span>
+              </div>
+              <Button 
+                onClick={() => setCurrentView('account')}
+                variant="outline"
+                className="border-primary/30 hover:bg-primary/5 hover:border-primary hover:shadow-md transition-all duration-300"
+              >
+                My Account
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Hero Section with Football Coaching Background */}
+      {/* Hero Section */}
       <section 
-        className="relative bg-cover bg-center bg-no-repeat py-16 md:py-24"
+        className="relative overflow-hidden py-20 md:py-32"
         style={{
-          backgroundImage: `linear-gradient(rgba(34, 197, 94, 0.8), rgba(34, 197, 94, 0.8)), url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1993&q=80')`,
+          backgroundImage: `var(--gradient-hero), url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1993&q=80')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundBlendMode: 'overlay'
         }}
       >
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-float"></div>
+          <div className="absolute bottom-20 right-10 w-24 h-24 bg-white/5 rounded-full blur-lg animate-float" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white/10 rounded-full blur-md animate-float" style={{animationDelay: '4s'}}></div>
+        </div>
+        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Plan Better Training Sessions
-          </h2>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto mb-8">
-            Create professional training sessions aligned with FA guidelines. 
-            From grassroots to academy level - your intelligent coaching assistant.
-          </p>
-          <Button 
-            onClick={() => setCurrentView('team-setup')}
-            size="lg"
-            className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-          >
-            Start Planning Session
-          </Button>
+          <div className="animate-fade-in-scale">
+            <h2 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
+              Elevate Your
+              <span className="block bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                Coaching Game
+              </span>
+            </h2>
+            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-12 leading-relaxed">
+              The most advanced coaching platform trusted by UEFA-qualified coaches. 
+              Create championship-level training sessions with AI-powered insights.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+              <Button 
+                onClick={() => setCurrentView('team-setup')}
+                size="lg"
+                className="btn-hero px-12 py-4 text-xl rounded-2xl"
+              >
+                Start Planning Session
+                <PlayCircle className="ml-3 w-6 h-6" />
+              </Button>
+              <Button 
+                onClick={() => setCurrentView('practice-library')}
+                variant="outline"
+                size="lg"
+                className="px-12 py-4 text-xl rounded-2xl bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+              >
+                Explore Practices
+              </Button>
+            </div>
+            
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto text-white">
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold mb-2">2,500+</div>
+                <div className="text-white/80 text-sm md:text-base">Active Coaches</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold mb-2">50K+</div>
+                <div className="text-white/80 text-sm md:text-base">Sessions Created</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold mb-2">98%</div>
+                <div className="text-white/80 text-sm md:text-base">Satisfaction Rate</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Main Content with Background */}
-      <main 
-        className="relative bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`,
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main Content */}
+      <main className="relative">
+        <div className="absolute inset-0 bg-gradient-surface opacity-50"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-green-200 bg-gradient-to-br from-white to-green-50" onClick={() => setCurrentView('team-setup')}>
-              <CardHeader className="text-center pb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <Users className="w-6 h-6 text-white" />
+          <div className="text-center mb-16">
+            <h3 className="text-4xl font-bold text-foreground mb-4">Choose Your Path</h3>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Everything you need to create professional training sessions
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+            <Card 
+              className="card-premium group cursor-pointer animate-fade-in-scale" 
+              onClick={() => setCurrentView('team-setup')}
+              style={{animationDelay: '0.1s'}}
+            >
+              <CardHeader className="text-center pb-6 pt-8">
+                <div className="w-16 h-16 bg-gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-premium group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-8 h-8 text-primary-foreground" />
                 </div>
-                <CardTitle className="text-lg text-gray-800">New Session</CardTitle>
-                <CardDescription className="text-gray-600">
-                  Set up your team and create a training session
+                <CardTitle className="text-xl font-bold text-card-foreground mb-3">New Session</CardTitle>
+                <CardDescription className="text-muted-foreground text-base leading-relaxed">
+                  Set up your team and create a professional training session with AI assistance
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-blue-200 bg-gradient-to-br from-white to-blue-50 opacity-75">
-              <CardHeader className="text-center pb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <Target className="w-6 h-6 text-white" />
+            <Card className="card-premium opacity-60 cursor-not-allowed animate-fade-in-scale" style={{animationDelay: '0.2s'}}>
+              <CardHeader className="text-center pb-6 pt-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-accent to-accent/80 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <Target className="w-8 h-8 text-accent-foreground" />
                 </div>
-                <CardTitle className="text-lg text-gray-800">Saved Templates</CardTitle>
-                <CardDescription className="text-gray-600">
-                  Access your favourite session templates
+                <CardTitle className="text-xl font-bold text-card-foreground mb-3">
+                  Saved Templates
+                  <span className="ml-2 px-2 py-1 text-xs font-semibold bg-warning/20 text-warning rounded-full">PREMIUM</span>
+                </CardTitle>
+                <CardDescription className="text-muted-foreground text-base leading-relaxed">
+                  Access and customize your favourite session templates
                 </CardDescription>
               </CardHeader>
             </Card>
 
             <Card 
-              className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50" 
+              className="card-premium group cursor-pointer animate-fade-in-scale" 
               onClick={() => setCurrentView('practice-library')}
+              style={{animationDelay: '0.3s'}}
             >
-              <CardHeader className="text-center pb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <PlayCircle className="w-6 h-6 text-white" />
+              <CardHeader className="text-center pb-6 pt-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary-light to-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-premium group-hover:scale-110 transition-transform duration-300">
+                  <PlayCircle className="w-8 h-8 text-primary-foreground" />
                 </div>
-                <CardTitle className="text-lg text-gray-800">Practice Library</CardTitle>
-                <CardDescription className="text-gray-600">
-                  Browse hundreds of coaching practices
+                <CardTitle className="text-xl font-bold text-card-foreground mb-3">Practice Library</CardTitle>
+                <CardDescription className="text-muted-foreground text-base leading-relaxed">
+                  Browse 500+ UEFA-approved coaching practices and drills
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-2 hover:border-orange-200 bg-gradient-to-br from-white to-orange-50 opacity-75">
-              <CardHeader className="text-center pb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <FileText className="w-6 h-6 text-white" />
+            <Card className="card-premium opacity-60 cursor-not-allowed animate-fade-in-scale" style={{animationDelay: '0.4s'}}>
+              <CardHeader className="text-center pb-6 pt-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-accent to-accent/80 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <FileText className="w-8 h-8 text-accent-foreground" />
                 </div>
-                <CardTitle className="text-lg text-gray-800">Recent Sessions</CardTitle>
-                <CardDescription className="text-gray-600">
-                  View and edit previous session plans
+                <CardTitle className="text-xl font-bold text-card-foreground mb-3">
+                  Analytics Dashboard
+                  <span className="ml-2 px-2 py-1 text-xs font-semibold bg-warning/20 text-warning rounded-full">ELITE</span>
+                </CardTitle>
+                <CardDescription className="text-muted-foreground text-base leading-relaxed">
+                  Track player progress and session effectiveness
                 </CardDescription>
               </CardHeader>
             </Card>
           </div>
 
           {/* Features Section */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-gray-100">
-            <div className="text-center mb-8">
-              <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                Why Choose CoachAssist?
+          <div className="glass rounded-3xl shadow-premium p-12 border border-border/20 animate-fade-in-scale">
+            <div className="text-center mb-16">
+              <h3 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+                Why Elite Coaches Choose 
+                <span className="block bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+                  CoachAssist Pro
+                </span>
               </h3>
-              <p className="text-gray-600 text-lg">Built by UEFA-qualified coaches for coaches at every level</p>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                Built by UEFA-qualified coaches, trusted by professional academies worldwide
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
-                  <Award className="w-8 h-8 text-green-600" />
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              <div className="text-center group animate-slide-in-right" style={{animationDelay: '0.2s'}}>
+                <div className="w-24 h-24 bg-gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-premium">
+                  <Award className="w-12 h-12 text-primary-foreground" />
                 </div>
-                <h4 className="text-xl font-semibold mb-3 text-gray-800">UEFA-Qualified Expertise</h4>
-                <p className="text-gray-600 leading-relaxed">
-                  Developed by UEFA-qualified coaches following proven coaching principles and FA guidelines
+                <h4 className="text-2xl font-bold mb-4 text-foreground">UEFA-Qualified Expertise</h4>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  Developed by UEFA Pro License coaches following proven methodologies and FA guidelines used by professional academies
                 </p>
               </div>
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
-                  <Zap className="w-8 h-8 text-blue-600" />
+              
+              <div className="text-center group animate-slide-in-right" style={{animationDelay: '0.4s'}}>
+                <div className="w-24 h-24 bg-gradient-to-br from-primary-light to-primary rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-premium">
+                  <Zap className="w-12 h-12 text-primary-foreground" />
                 </div>
-                <h4 className="text-xl font-semibold mb-3 text-gray-800">Visual Practice Diagrams</h4>
-                <p className="text-gray-600 leading-relaxed">
-                  Clear animations and diagrams for every practice and drill to enhance understanding
+                <h4 className="text-2xl font-bold mb-4 text-foreground">AI-Powered Intelligence</h4>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  Advanced AI analyzes your team's needs and generates personalized training sessions with visual diagrams and progressions
                 </p>
               </div>
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
-                  <Shield className="w-8 h-8 text-purple-600" />
+              
+              <div className="text-center group animate-slide-in-right" style={{animationDelay: '0.6s'}}>
+                <div className="w-24 h-24 bg-gradient-to-br from-success to-primary-light rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-premium">
+                  <Shield className="w-12 h-12 text-primary-foreground" />
                 </div>
-                <h4 className="text-xl font-semibold mb-3 text-gray-800">Adaptive Content</h4>
-                <p className="text-gray-600 leading-relaxed">
-                  Intelligently tailored for every age group and skill level from grassroots to academy
+                <h4 className="text-2xl font-bold mb-4 text-foreground">Adaptive Content</h4>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  Intelligently scales from grassroots to elite academy level with age-appropriate progressions and safety considerations
                 </p>
               </div>
+            </div>
+            
+            {/* CTA Section */}
+            <div className="text-center mt-16 p-8 bg-primary/5 rounded-2xl border border-primary/20">
+              <h4 className="text-2xl font-bold text-foreground mb-4">Ready to Transform Your Coaching?</h4>
+              <p className="text-muted-foreground mb-6 text-lg">Join thousands of coaches creating championship-level training sessions</p>
+              <Button 
+                onClick={() => setCurrentView('account')}
+                className="btn-premium px-8 py-3 text-lg rounded-xl"
+              >
+                Start Free Trial
+              </Button>
             </div>
           </div>
         </div>

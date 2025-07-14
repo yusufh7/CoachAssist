@@ -8,6 +8,7 @@ import SessionPhase from '@/components/SessionPhase';
 import SessionExport from '@/components/SessionExport';
 import ActivityCustomizer from '@/components/ActivityCustomizer';
 import SessionGenerator from '@/components/SessionGenerator';
+import PremiumLoading from '@/components/ui/premium-loading';
 
 const SessionPlanner = ({ teamData, onBack }) => {
   const [sessionPlan, setSessionPlan] = useState(null);
@@ -78,13 +79,10 @@ const SessionPlanner = ({ teamData, onBack }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 flex items-center justify-center">
-        <div className="w-96 bg-white rounded-2xl shadow-xl p-8 text-center border border-green-100">
-          <div className="animate-spin w-12 h-12 border-3 border-green-600 border-t-transparent rounded-full mx-auto mb-6"></div>
-          <h3 className="text-xl font-semibold mb-3 text-gray-800">Generating Your Session Plan</h3>
-          <p className="text-gray-600 leading-relaxed">Creating a customized training session based on your team's needs...</p>
-        </div>
-      </div>
+      <PremiumLoading 
+        title="Generating Your Session Plan"
+        subtitle="Creating a customized training session based on your team's needs and UEFA guidelines..."
+      />
     );
   }
 
@@ -116,27 +114,58 @@ const SessionPlanner = ({ teamData, onBack }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
-      <header className="bg-white/90 backdrop-blur-sm shadow-sm border-b border-green-200">
+    <div className="min-h-screen bg-gradient-surface">
+      <header className="glass border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Button variant="ghost" onClick={onBack} className="hover:bg-green-50 transition-colors">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+          <div className="flex items-center justify-between h-20">
+            <Button 
+              variant="ghost" 
+              onClick={onBack} 
+              className="hover:bg-primary/5 transition-all duration-300 hover:scale-105"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
               Back to Dashboard
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">{sessionPlan.title}</h1>
+            <div className="text-center">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+                {sessionPlan.title}
+              </h1>
+              <p className="text-xs text-muted-foreground font-medium tracking-wide">
+                PROFESSIONAL SESSION PLAN
+              </p>
+            </div>
             <SessionExport sessionPlan={sessionPlan} teamData={teamData} />
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm border border-gray-200 rounded-xl p-1">
-            <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-green-500 data-[state=active]:text-white">Overview</TabsTrigger>
-            <TabsTrigger value="warm-up" className="rounded-lg data-[state=active]:bg-green-500 data-[state=active]:text-white">Warm-Up</TabsTrigger>
-            <TabsTrigger value="technical-practice" className="rounded-lg data-[state=active]:bg-green-500 data-[state=active]:text-white">Main Session</TabsTrigger>
-            <TabsTrigger value="cool-down" className="rounded-lg data-[state=active]:bg-green-500 data-[state=active]:text-white">Cool-Down</TabsTrigger>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          <TabsList className="grid w-full grid-cols-4 glass border border-border/20 rounded-2xl p-2 shadow-premium">
+            <TabsTrigger 
+              value="overview" 
+              className="rounded-xl data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-medium"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="warm-up" 
+              className="rounded-xl data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-medium"
+            >
+              Warm-Up
+            </TabsTrigger>
+            <TabsTrigger 
+              value="technical-practice" 
+              className="rounded-xl data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-medium"
+            >
+              Main Session
+            </TabsTrigger>
+            <TabsTrigger 
+              value="cool-down" 
+              className="rounded-xl data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-medium"
+            >
+              Cool-Down
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
