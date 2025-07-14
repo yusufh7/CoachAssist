@@ -88,18 +88,20 @@ const Index = () => {
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="animate-fade-in-scale">
-            <h2 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
-              Elevate Your
-              <span className="block bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+            <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+              <span className="text-white drop-shadow-lg">Elevate Your</span>
+              <span className="block text-white drop-shadow-lg">
                 Coaching Game
               </span>
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-12 leading-relaxed">
-              The most advanced coaching platform trusted by UEFA-qualified coaches. 
-              Create championship-level training sessions with AI-powered insights.
-            </p>
+            <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-8 max-w-4xl mx-auto mb-12 border border-white/20">
+              <p className="text-xl md:text-2xl text-white leading-relaxed font-medium">
+                The most advanced coaching platform designed by UEFA-qualified coaches. 
+                Create championship-level training sessions with intelligent planning tools.
+              </p>
+            </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 onClick={() => setCurrentView('team-setup')}
                 size="lg"
@@ -116,22 +118,6 @@ const Index = () => {
               >
                 Explore Practices
               </Button>
-            </div>
-            
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto text-white">
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold mb-2">2,500+</div>
-                <div className="text-white/80 text-sm md:text-base">Active Coaches</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold mb-2">50K+</div>
-                <div className="text-white/80 text-sm md:text-base">Sessions Created</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold mb-2">98%</div>
-                <div className="text-white/80 text-sm md:text-base">Satisfaction Rate</div>
-              </div>
             </div>
           </div>
         </div>
