@@ -69,10 +69,10 @@ const TeamSetup = ({ onComplete }) => {
                 <div>
                   <Label htmlFor="ageGroup">Age Group</Label>
                   <Select onValueChange={(value) => updateFormData('ageGroup', value)} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select age group" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background border border-border z-50">
                       <SelectItem value="u7">Under 7s</SelectItem>
                       <SelectItem value="u9">Under 9s</SelectItem>
                       <SelectItem value="u11">Under 11s</SelectItem>
@@ -87,10 +87,10 @@ const TeamSetup = ({ onComplete }) => {
                 <div>
                   <Label htmlFor="skillLevel">Skill Level</Label>
                   <Select onValueChange={(value) => updateFormData('skillLevel', value)} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select skill level" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background border border-border z-50">
                       <SelectItem value="beginner">Beginner</SelectItem>
                       <SelectItem value="developing">Developing</SelectItem>
                       <SelectItem value="intermediate">Intermediate</SelectItem>
@@ -115,10 +115,10 @@ const TeamSetup = ({ onComplete }) => {
                 <div>
                   <Label htmlFor="sessionDuration">Session Duration</Label>
                   <Select onValueChange={(value) => updateFormData('sessionDuration', value)} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background border border-border z-50">
                       <SelectItem value="45">45 minutes</SelectItem>
                       <SelectItem value="60">60 minutes</SelectItem>
                       <SelectItem value="75">75 minutes</SelectItem>
@@ -131,10 +131,10 @@ const TeamSetup = ({ onComplete }) => {
                 <div>
                   <Label htmlFor="playingStyle">Playing Style</Label>
                   <Select onValueChange={(value) => updateFormData('playingStyle', value)}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select playing style" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background border border-border z-50">
                       <SelectItem value="possession">Possession Based</SelectItem>
                       <SelectItem value="counter">Counter Attacking</SelectItem>
                       <SelectItem value="pressing">High Pressing</SelectItem>
