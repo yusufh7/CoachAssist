@@ -36,7 +36,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-surface">
       {/* Header */}
-      <header className="glass border-b border-border/50 sticky top-0 z-50">
+      <header className="bg-background/95 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center space-x-4">
@@ -50,7 +50,7 @@ const Index = () => {
                   CoachAssist Pro
                 </h1>
                 <p className="text-xs text-muted-foreground font-medium tracking-wide">
-                  UEFA QUALIFIED COACHING PLATFORM
+                  INTELLIGENT COACHING PLATFORM
                 </p>
               </div>
             </div>
@@ -98,8 +98,7 @@ const Index = () => {
             </h2>
             <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-8 max-w-4xl mx-auto mb-12 border border-white/20">
               <p className="text-xl md:text-2xl text-white leading-relaxed font-medium">
-                The most advanced coaching platform designed by UEFA-qualified coaches. 
-                Create championship-level training sessions with intelligent planning tools.
+                An intelligent coaching platform designed to help coaches create professional training sessions with smart planning tools and comprehensive practice libraries.
               </p>
             </div>
             
@@ -180,7 +179,7 @@ const Index = () => {
                 </div>
                 <CardTitle className="text-xl font-bold text-card-foreground mb-3">Practice Library</CardTitle>
                 <CardDescription className="text-muted-foreground text-base leading-relaxed">
-                  Browse 500+ UEFA-approved coaching practices and drills
+                  Browse 500+ professional coaching practices and drills
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -205,13 +204,13 @@ const Index = () => {
           <div className="glass rounded-3xl shadow-premium p-12 border border-border/20 animate-fade-in-scale">
             <div className="text-center mb-16">
               <h3 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                Why Elite Coaches Choose 
+                Why Coaches Choose 
                 <span className="block bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-                  CoachAssist Pro
+                  CoachAssist
                 </span>
               </h3>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                Built by UEFA-qualified coaches, trusted by professional academies worldwide
+                Professional coaching tools designed to elevate your training sessions
               </p>
             </div>
             
@@ -220,9 +219,9 @@ const Index = () => {
                 <div className="w-24 h-24 bg-gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-premium">
                   <Award className="w-12 h-12 text-primary-foreground" />
                 </div>
-                <h4 className="text-2xl font-bold mb-4 text-foreground">UEFA-Qualified Expertise</h4>
+                <h4 className="text-2xl font-bold mb-4 text-foreground">Professional Tools</h4>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  Developed by UEFA Pro License coaches following proven methodologies and FA guidelines used by professional academies
+                  Comprehensive coaching tools built with industry best practices to help you plan effective training sessions
                 </p>
               </div>
               
