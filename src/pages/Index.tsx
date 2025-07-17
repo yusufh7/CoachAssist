@@ -211,7 +211,7 @@ const Index = () => {
           <div 
             className="glass rounded-3xl shadow-premium p-12 border border-border/20 animate-fade-in-scale relative overflow-hidden"
             style={{
-              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.98)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=7360&q=80')`,
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=7360&q=80')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -264,7 +264,7 @@ const Index = () => {
             <div 
               className="text-center mt-16 p-8 rounded-2xl border border-primary/20 relative overflow-hidden"
               style={{
-                backgroundImage: `linear-gradient(rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.05)), url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=3543&q=80')`,
+                backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.93)), url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=3543&q=80')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
