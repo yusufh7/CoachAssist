@@ -129,7 +129,14 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-surface opacity-50"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           {/* Quick Actions */}
-          <div className="text-center mb-16">
+          <div 
+            className="text-center mb-16 relative py-16 rounded-3xl overflow-hidden"
+            style={{
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=3882&q=80')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
             <h3 className="text-4xl font-bold text-foreground mb-4">Choose Your Path</h3>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Everything you need to create professional training sessions
@@ -201,7 +208,14 @@ const Index = () => {
           </div>
 
           {/* Features Section */}
-          <div className="glass rounded-3xl shadow-premium p-12 border border-border/20 animate-fade-in-scale">
+          <div 
+            className="glass rounded-3xl shadow-premium p-12 border border-border/20 animate-fade-in-scale relative overflow-hidden"
+            style={{
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.98)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=7360&q=80')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
             <div className="text-center mb-16">
               <h3 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
                 Why Coaches Choose 
@@ -247,7 +261,14 @@ const Index = () => {
             </div>
             
             {/* CTA Section */}
-            <div className="text-center mt-16 p-8 bg-primary/5 rounded-2xl border border-primary/20">
+            <div 
+              className="text-center mt-16 p-8 rounded-2xl border border-primary/20 relative overflow-hidden"
+              style={{
+                backgroundImage: `linear-gradient(rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.05)), url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=3543&q=80')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            >
               <h4 className="text-2xl font-bold text-foreground mb-4">Ready to Transform Your Coaching?</h4>
               <p className="text-muted-foreground mb-6 text-lg">Join thousands of coaches creating championship-level training sessions</p>
               <Button 
