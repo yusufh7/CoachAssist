@@ -2,13 +2,16 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SecureInput } from "@/components/ui/secure-input";
+import { SecureTextarea } from "@/components/ui/secure-textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, AlertTriangle } from 'lucide-react';
+import { teamSetupSchema, formRateLimiter, type TeamSetupFormData } from "@/lib/validation";
+import { useToast } from "@/hooks/use-toast";
 
 const TeamSetup = ({ onComplete }) => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     teamName: '',
     ageGroup: '',
@@ -19,14 +22,59 @@ const TeamSetup = ({ onComplete }) => {
     playerCount: '',
     currentFocus: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onComplete(formData);
+    setIsSubmitting(true);
+    setErrors({});
+
+    // Rate limiting check
+    const clientId = 'team-setup-form'; // In a real app, this would be user-specific
+    if (!formRateLimiter.canProceed(clientId)) {
+      toast({
+        title: "Too many attempts",
+        description: "Please wait a minute before submitting again.",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      // Validate and sanitize form data
+      const validatedData = teamSetupSchema.parse(formData);
+      onComplete(validatedData);
+    } catch (error) {
+      if (error instanceof Error) {
+        const zodError = error as any;
+        if (zodError.errors) {
+          const formErrors: Record<string, string> = {};
+          zodError.errors.forEach((err: any) => {
+            if (err.path) {
+              formErrors[err.path[0]] = err.message;
+            }
+          });
+          setErrors(formErrors);
+          toast({
+            title: "Validation Error",
+            description: "Please check the form and correct any errors.",
+            variant: "destructive"
+          });
+        }
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const updateFormData = (field, value) => {
+  const updateFormData = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
   };
 
   return (
@@ -57,13 +105,22 @@ const TeamSetup = ({ onComplete }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="teamName">Team Name</Label>
-                  <Input
+                  <SecureInput
                     id="teamName"
                     placeholder="e.g. Under 16s Eagles"
                     value={formData.teamName}
                     onChange={(e) => updateFormData('teamName', e.target.value)}
                     required
+                    maxLength={100}
+                    allowedPattern={/^[a-zA-Z0-9\s\-&']*$/}
+                    className={errors.teamName ? "border-destructive" : ""}
                   />
+                  {errors.teamName && (
+                    <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {errors.teamName}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -102,14 +159,25 @@ const TeamSetup = ({ onComplete }) => {
 
                 <div>
                   <Label htmlFor="playerCount">Number of Players</Label>
-                  <Input
+                  <SecureInput
                     id="playerCount"
                     type="number"
                     placeholder="e.g. 16"
                     value={formData.playerCount}
                     onChange={(e) => updateFormData('playerCount', e.target.value)}
                     required
+                    min={1}
+                    max={50}
+                    maxLength={2}
+                    allowedPattern={/^[0-9]*$/}
+                    className={errors.playerCount ? "border-destructive" : ""}
                   />
+                  {errors.playerCount && (
+                    <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {errors.playerCount}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -147,27 +215,53 @@ const TeamSetup = ({ onComplete }) => {
 
               <div>
                 <Label htmlFor="sessionGoals">Session Goals</Label>
-                <Textarea
+                <SecureTextarea
                   id="sessionGoals"
                   placeholder="e.g. Improve passing under pressure, work on defensive shape, finishing from wide areas"
                   value={formData.sessionGoals}
                   onChange={(e) => updateFormData('sessionGoals', e.target.value)}
                   required
+                  maxLength={500}
+                  className={errors.sessionGoals ? "border-destructive" : ""}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formData.sessionGoals.length}/500 characters
+                </p>
+                {errors.sessionGoals && (
+                  <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    {errors.sessionGoals}
+                  </p>
+                )}
               </div>
 
               <div>
                 <Label htmlFor="currentFocus">Current Team Focus Areas</Label>
-                <Textarea
+                <SecureTextarea
                   id="currentFocus"
                   placeholder="e.g. Players struggle with first touch under pressure, need to work on communication in defensive transitions"
                   value={formData.currentFocus}
                   onChange={(e) => updateFormData('currentFocus', e.target.value)}
+                  maxLength={500}
+                  className={errors.currentFocus ? "border-destructive" : ""}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formData.currentFocus.length}/500 characters
+                </p>
+                {errors.currentFocus && (
+                  <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    {errors.currentFocus}
+                  </p>
+                )}
               </div>
 
-              <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
-                Generate Training Session
+              <Button 
+                type="submit" 
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50" 
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Validating..." : "Generate Training Session"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </form>
