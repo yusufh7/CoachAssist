@@ -36,13 +36,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-surface">
       {/* Header */}
-      <header className="bg-gray-900/95 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
+      <header className="bg-background/95 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center space-x-4">
               <img 
-                src="/lovable-uploads/d5aa6f81-60c2-46cf-874a-6b7aa58ef14b.png" 
-                alt="CoachAssist Pro Logo" 
+                src="/lovable-uploads/b4a0b5e5-23bc-4b9f-ae3c-403ab58e1cc3.png" 
+                alt="CoachAssist Logo" 
                 className="h-10 w-auto"
               />
               <div>
