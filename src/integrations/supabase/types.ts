@@ -14,7 +14,116 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          age_group: string
+          created_at: string
+          current_focus: string | null
+          goals: string | null
+          id: string
+          name: string
+          player_count: number
+          playing_style: string | null
+          session_duration: number
+          skill_level: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_group: string
+          created_at?: string
+          current_focus?: string | null
+          goals?: string | null
+          id?: string
+          name: string
+          player_count: number
+          playing_style?: string | null
+          session_duration: number
+          skill_level: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_group?: string
+          created_at?: string
+          current_focus?: string | null
+          goals?: string | null
+          id?: string
+          name?: string
+          player_count?: number
+          playing_style?: string | null
+          session_duration?: number
+          skill_level?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      training_sessions: {
+        Row: {
+          activities: Json
+          created_at: string
+          description: string | null
+          id: string
+          team_id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activities?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          team_id: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activities?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          team_id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_sessions_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

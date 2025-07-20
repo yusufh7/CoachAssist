@@ -1,24 +1,45 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import TeamSetup from '@/components/TeamSetup';
 import SessionPlanner from '@/components/SessionPlanner';
 import PracticeLibrary from '@/components/PracticeLibrary';
-import AccountPage from '@/components/AccountPage';
+import AuthPage from '@/components/AuthPage';
 import { Users, Target, PlayCircle, FileText, Award, Zap, Shield } from 'lucide-react';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState('dashboard');
   const [teamData, setTeamData] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
 
-  const handleTeamSetup = (data) => {
+  useEffect(() => {
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleTeamSetup = (data: any) => {
     setTeamData(data);
     setCurrentView('planning');
   };
 
-  if (currentView === 'team-setup') {
-    return <TeamSetup onComplete={handleTeamSetup} />;
+  if (currentView === 'teamSetup') {
+    return <TeamSetup onComplete={handleTeamSetup} user={user} />;
   }
 
   if (currentView === 'planning' && teamData) {
@@ -30,7 +51,7 @@ const Index = () => {
   }
 
   if (currentView === 'account') {
-    return <AccountPage onBack={() => setCurrentView('dashboard')} />;
+    return <AuthPage onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -60,11 +81,14 @@ const Index = () => {
                 <span className="font-medium">Live Platform</span>
               </div>
               <Button 
+                variant="outline" 
                 onClick={() => setCurrentView('account')}
-                variant="outline"
-                className="border-primary/30 hover:bg-primary/5 hover:border-primary hover:shadow-md transition-all duration-300"
+                className="flex items-center gap-2"
               >
-                My Account
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                {user ? `Welcome, ${user.email}` : 'Sign In / Sign Up'}
               </Button>
             </div>
           </div>
@@ -104,7 +128,7 @@ const Index = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                onClick={() => setCurrentView('team-setup')}
+                onClick={() => setCurrentView('teamSetup')}
                 size="lg"
                 className="btn-hero px-12 py-4 text-xl rounded-2xl"
               >
@@ -146,7 +170,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
             <Card 
               className="card-premium group cursor-pointer animate-fade-in-scale" 
-              onClick={() => setCurrentView('team-setup')}
+              onClick={() => setCurrentView('teamSetup')}
               style={{animationDelay: '0.1s'}}
             >
               <CardHeader className="text-center pb-6 pt-8">

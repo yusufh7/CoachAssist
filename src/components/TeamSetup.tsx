@@ -9,8 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, ArrowRight, AlertTriangle } from 'lucide-react';
 import { teamSetupSchema, formRateLimiter, type TeamSetupFormData } from "@/lib/validation";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from '@/integrations/supabase/client';
+import { User } from '@supabase/supabase-js';
 
-const TeamSetup = ({ onComplete }) => {
+interface TeamSetupProps {
+  onComplete: (data: any) => void;
+  user?: User | null;
+}
+
+const TeamSetup = ({ onComplete, user }: TeamSetupProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     teamName: '',
@@ -45,6 +52,31 @@ const TeamSetup = ({ onComplete }) => {
     try {
       // Validate and sanitize form data
       const validatedData = teamSetupSchema.parse(formData);
+      
+      // Save to database if user is authenticated
+      if (user) {
+        const { error } = await supabase.from('teams').insert({
+          user_id: user.id,
+          name: validatedData.teamName,
+          age_group: validatedData.ageGroup,
+          skill_level: validatedData.skillLevel,
+          player_count: Number(validatedData.playerCount),
+          session_duration: Number(validatedData.sessionDuration),
+          playing_style: validatedData.playingStyle,
+          goals: validatedData.sessionGoals,
+          current_focus: validatedData.currentFocus
+        });
+
+        if (error) {
+          throw new Error('Failed to save team: ' + error.message);
+        }
+
+        toast({
+          title: "Team saved!",
+          description: "Your team has been saved to your account.",
+        });
+      }
+      
       onComplete(validatedData);
     } catch (error) {
       if (error instanceof Error) {
