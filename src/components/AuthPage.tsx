@@ -139,9 +139,10 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
     }
 
     try {
+      console.log('Starting signup process for:', signupData.email);
       const redirectUrl = `${window.location.origin}/`;
       
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: signupData.email,
         password: signupData.password,
         options: {
@@ -152,7 +153,10 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
         }
       });
 
+      console.log('Signup response:', { data, error });
+
       if (error) {
+        console.error('Signup error:', error);
         toast({
           title: "Signup Error",
           description: error.message,
@@ -160,6 +164,8 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
         });
         return;
       }
+
+      console.log('Signup successful:', data);
 
       toast({
         title: "Account Created!",
@@ -169,6 +175,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
       setIsSignupOpen(false);
       setSignupData({ email: '', password: '', displayName: '' });
     } catch (error) {
+      console.error('Unexpected signup error:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
