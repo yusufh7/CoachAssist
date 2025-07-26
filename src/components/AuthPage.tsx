@@ -140,15 +140,9 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
 
     try {
       console.log('Starting signup process for:', signupData.email);
-      console.log('Supabase configuration looks good');
       
       const redirectUrl = `${window.location.origin}/`;
       console.log('Redirect URL:', redirectUrl);
-      
-      // Test if Supabase is reachable first
-      console.log('Testing Supabase connection...');
-      const { data: testData, error: testError } = await supabase.from('profiles').select('count').limit(1);
-      console.log('Connection test result:', { testData, testError });
       
       const { data, error } = await supabase.auth.signUp({
         email: signupData.email,
