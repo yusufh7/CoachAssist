@@ -140,7 +140,15 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
 
     try {
       console.log('Starting signup process for:', signupData.email);
+      console.log('Supabase configuration looks good');
+      
       const redirectUrl = `${window.location.origin}/`;
+      console.log('Redirect URL:', redirectUrl);
+      
+      // Test if Supabase is reachable first
+      console.log('Testing Supabase connection...');
+      const { data: testData, error: testError } = await supabase.from('profiles').select('count').limit(1);
+      console.log('Connection test result:', { testData, testError });
       
       const { data, error } = await supabase.auth.signUp({
         email: signupData.email,
@@ -156,10 +164,23 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
       console.log('Signup response:', { data, error });
 
       if (error) {
-        console.error('Signup error:', error);
+        console.error('Signup error details:', {
+          message: error.message,
+          status: error.status,
+          details: error
+        });
+        
+        // More user-friendly error messages
+        let errorMessage = error.message;
+        if (error.message.includes('fetch')) {
+          errorMessage = "Network connection failed. Please check your internet connection and try again.";
+        } else if (error.message.includes('User already registered')) {
+          errorMessage = "An account with this email already exists. Please try signing in instead.";
+        }
+        
         toast({
           title: "Signup Error",
-          description: error.message,
+          description: errorMessage,
           variant: "destructive"
         });
         return;
@@ -177,8 +198,8 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
     } catch (error) {
       console.error('Unexpected signup error:', error);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Network Error",
+        description: "Failed to connect to the server. Please check your internet connection and try again.",
         variant: "destructive"
       });
     }
