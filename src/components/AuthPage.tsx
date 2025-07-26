@@ -164,12 +164,20 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
           details: error
         });
         
-        // More user-friendly error messages
+        // Handle specific Supabase error types
         let errorMessage = error.message;
-        if (error.message.includes('fetch')) {
-          errorMessage = "Network connection failed. Please check your internet connection and try again.";
+        if (error.message.includes('Failed to fetch') || error.message.includes('network')) {
+          errorMessage = "Connection failed. Please check your internet connection and try again.";
         } else if (error.message.includes('User already registered')) {
           errorMessage = "An account with this email already exists. Please try signing in instead.";
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = "Please enter a valid email address.";
+        } else if (error.message.includes('Password should be')) {
+          errorMessage = "Password does not meet requirements.";
+        } else if (error.status === 422) {
+          errorMessage = "Invalid email or password format.";
+        } else if (error.status === 500) {
+          errorMessage = "Server error. Please try again in a moment.";
         }
         
         toast({
