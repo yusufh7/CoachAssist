@@ -110,6 +110,159 @@ const PracticeLibrary = ({ onBack }) => {
           duration: '20-25 mins',
           players: '8-12',
           difficulty: 'Advanced'
+        },
+        // Additional FA practices from learn.englandfootball.com
+        {
+          id: 47,
+          title: 'Dribbling - Effective Techniques',
+          description: 'Develop technical ability to dribble past opponents with effective techniques',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 48,
+          title: 'Dribbling - Attacking Principles',
+          description: 'Use dribbling to create space and opportunities for attacking play',
+          duration: '20-25 mins',
+          players: '12-21',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 49,
+          title: 'Receiving - Pass and Move',
+          description: 'Think about receiving the ball effectively and moving into space',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 50,
+          title: 'Festival Week Practice',
+          description: 'Showcase passing and receiving skills in competitive scenarios',
+          duration: '25-30 mins',
+          players: '12-18',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 51,
+          title: 'Eliminate the Opposition',
+          description: 'Combine with teammates to eliminate opposition players',
+          duration: '20-25 mins',
+          players: '10-16',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 52,
+          title: 'Creating and Exploiting Space',
+          description: 'Create and exploit space to pass and receive effectively',
+          duration: '20-25 mins',
+          players: '12-18',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 53,
+          title: 'Around the Clock',
+          description: 'Receive the ball and play forward in different directions',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 54,
+          title: 'The Lions Den',
+          description: 'Pass and receive the ball under pressure from opponents',
+          duration: '15-20 mins',
+          players: '8-12',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 55,
+          title: 'Connecting with Teammates',
+          description: 'Work on movement skills to pass and receive effectively',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 56,
+          title: 'Width for Deception',
+          description: 'Use width to create crossing opportunities and score goals',
+          duration: '20-25 mins',
+          players: '12-18',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 57,
+          title: 'Playing Out to Attack',
+          description: 'Play out from the back and create goalscoring opportunities',
+          duration: '25-30 mins',
+          players: '14-20',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 58,
+          title: 'Scoring as a Team',
+          description: 'Work together to create and finish chances in the final third',
+          duration: '20-25 mins',
+          players: '12-18',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 59,
+          title: 'Playing with Two Strikers',
+          description: 'Use two strikers to create varied attacking patterns',
+          duration: '20-25 mins',
+          players: '12-18',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 60,
+          title: 'Wing Play and Crossing',
+          description: 'Develop wing play to deliver effective crosses',
+          duration: '20-25 mins',
+          players: '10-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 61,
+          title: 'Overlapping Play',
+          description: 'Use overlapping runs to create numerical advantages',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 62,
+          title: 'Small-Sided Games',
+          description: 'Develop decision making in realistic game situations',
+          duration: '25-30 mins',
+          players: '6-14',
+          difficulty: 'All Levels'
+        },
+        {
+          id: 63,
+          title: 'One-Touch Passing',
+          description: 'Improve passing speed and accuracy with one-touch play',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 64,
+          title: 'Triangle Passing',
+          description: 'Master triangular passing patterns for possession play',
+          duration: '15-20 mins',
+          players: '6-12',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 65,
+          title: 'Long Ball Play',
+          description: 'Use long balls effectively to change the point of attack',
+          duration: '15-20 mins',
+          players: '10-16',
+          difficulty: 'Intermediate'
         }
       ]
     },
@@ -213,6 +366,127 @@ const PracticeLibrary = ({ onBack }) => {
           duration: '15-20 mins',
           players: '10-16',
           difficulty: 'Beginner'
+        },
+        // Additional FA pressing and defensive practices
+        {
+          id: 66,
+          title: 'Practising the Press',
+          description: 'Press and cover to improve ability to challenge for the ball',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 67,
+          title: 'Speed of the Press',
+          description: 'Improve pressing skills with quick reactions and movement',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 68,
+          title: 'Press to Dictate',
+          description: 'Use pressing to dictate play and control the game',
+          duration: '20-25 mins',
+          players: '10-16',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 69,
+          title: 'Locked In',
+          description: 'Recognise when to apply pressure and when to delay opponents',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 70,
+          title: 'Swift Support',
+          description: 'Work on pressing and covering with quick support play',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 71,
+          title: 'Marking Rivals',
+          description: 'Introduce players to marking techniques and positioning',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 72,
+          title: 'Defend as Friends',
+          description: 'Work on marking and intercepting skills as a unit',
+          duration: '15-20 mins',
+          players: '10-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 73,
+          title: 'Interception Perfection',
+          description: 'Use carousel structure to work on marking and intercepting',
+          duration: '20-25 mins',
+          players: '12-18',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 74,
+          title: 'Table Football',
+          description: 'Develop intercepting skills in confined spaces',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 75,
+          title: 'Intercept as a Team',
+          description: 'Enhance marking and intercepting skills as a team unit',
+          duration: '20-25 mins',
+          players: '12-18',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 76,
+          title: 'Festival Week Defence',
+          description: 'Showcase marking and intercepting skills in competitive scenarios',
+          duration: '25-30 mins',
+          players: '14-20',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 77,
+          title: 'Compact Defending',
+          description: 'Maintain compactness when defending as a unit',
+          duration: '20-25 mins',
+          players: '12-18',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 78,
+          title: 'Recovery Runs',
+          description: 'Make effective recovery runs when caught out of position',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 79,
+          title: 'Defensive Blocks',
+          description: 'Organise effective defensive blocks to stop shots',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 80,
+          title: 'Man Marking',
+          description: 'Track and mark specific opponents effectively',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
         }
       ]
     },
@@ -300,6 +574,87 @@ const PracticeLibrary = ({ onBack }) => {
           duration: '20-25 mins',
           players: '10-16',
           difficulty: 'Advanced'
+        },
+        // Additional FA set piece practices
+        {
+          id: 81,
+          title: 'Short Corner Routines',
+          description: 'Develop short corner kick strategies and execution',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 82,
+          title: 'Near Post Corners',
+          description: 'Attack the near post area from corner situations',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 83,
+          title: 'Far Post Delivery',
+          description: 'Perfect far post crosses from wide areas',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 84,
+          title: 'Free Kick Shooting',
+          description: 'Improve accuracy and power on direct free kicks',
+          duration: '15-20 mins',
+          players: '4-8',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 85,
+          title: 'Defensive Set Pieces',
+          description: 'Organise defensive shape for all set piece situations',
+          duration: '20-25 mins',
+          players: '10-18',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 86,
+          title: 'Goalkeeping - Set Pieces',
+          description: 'Goalkeeper positioning and decision making on set pieces',
+          duration: '15-20 mins',
+          players: '6-12',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 87,
+          title: 'Attacking Headers',
+          description: 'Practice heading technique for attacking set pieces',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 88,
+          title: 'Defending Headers',
+          description: 'Defensive heading technique and positioning',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 89,
+          title: 'Counter Attack from Set Pieces',
+          description: 'Quick transitions to attack after defending set pieces',
+          duration: '20-25 mins',
+          players: '12-18',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 90,
+          title: 'Set Piece Communication',
+          description: 'Organise and communicate effectively during set pieces',
+          duration: '15-20 mins',
+          players: '10-16',
+          difficulty: 'Beginner'
         }
       ]
     },
@@ -403,6 +758,175 @@ const PracticeLibrary = ({ onBack }) => {
           duration: '15-25 mins',
           players: '10-20',
           difficulty: 'Beginner'
+        },
+        // Additional FA physical and finishing practices
+        {
+          id: 91,
+          title: 'Goalkeeping - Shot Stopping',
+          description: 'Improve shot stopping technique and positioning',
+          duration: '15-20 mins',
+          players: '2-6',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 92,
+          title: 'Goalkeeping - Distribution',
+          description: 'Develop accurate distribution from goalkeepers',
+          duration: '15-20 mins',
+          players: '4-8',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 93,
+          title: 'Goalkeeping - Crosses',
+          description: 'Deal with crosses and high balls effectively',
+          duration: '15-20 mins',
+          players: '6-12',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 94,
+          title: 'Goalkeeping - 1v1 Situations',
+          description: 'Handle one-on-one situations with composure',
+          duration: '15-20 mins',
+          players: '4-8',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 95,
+          title: 'Finishing in the Box',
+          description: 'Improve finishing technique in penalty area',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 96,
+          title: 'Volley Technique',
+          description: 'Master volleys and half-volleys for shooting',
+          duration: '15-20 mins',
+          players: '6-12',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 97,
+          title: 'First Touch and Finish',
+          description: 'Control and finish in one fluid movement',
+          duration: '15-20 mins',
+          players: '8-14',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 98,
+          title: 'Quick Feet Finishing',
+          description: 'Use quick feet to create shooting opportunities',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 99,
+          title: 'Shooting Under Pressure',
+          description: 'Finish effectively when under pressure from defenders',
+          duration: '15-20 mins',
+          players: '10-16',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 100,
+          title: 'Turning and Dribbling to Score',
+          description: 'Turn with the ball and create shooting opportunities',
+          duration: '20-25 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 101,
+          title: 'Receiving and Finishing to Score',
+          description: 'Combine receiving skills with clinical finishing',
+          duration: '20-25 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 102,
+          title: 'Session Programme - Festival Week',
+          description: 'Showcase all skills in competitive game situations',
+          duration: '30-40 mins',
+          players: '16-22',
+          difficulty: 'All Levels'
+        }
+      ]
+    },
+    // Additional practice category for finishing and goalkeeping
+    'finishing-goalkeeping': {
+      title: 'Finishing & GK',
+      icon: <Target className="w-5 h-5" />,
+      color: 'from-purple-500 to-purple-600',
+      practices: [
+        {
+          id: 103,
+          title: 'Clinical Finishing',
+          description: 'Develop composure and accuracy in front of goal',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 104,
+          title: 'Power vs Placement',
+          description: 'Learn when to use power or placement when shooting',
+          duration: '15-20 mins',
+          players: '6-12',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 105,
+          title: 'Weak Foot Finishing',
+          description: 'Improve shooting accuracy with both feet',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 106,
+          title: 'Tap-ins and Rebounds',
+          description: 'Position for tap-ins and react to rebounds',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 107,
+          title: 'Chip and Lob Finishes',
+          description: 'Master delicate finishes over the goalkeeper',
+          duration: '15-20 mins',
+          players: '6-12',
+          difficulty: 'Advanced'
+        },
+        {
+          id: 108,
+          title: 'Goalkeeper Communication',
+          description: 'Organise the defence through effective communication',
+          duration: '15-20 mins',
+          players: '8-16',
+          difficulty: 'Intermediate'
+        },
+        {
+          id: 109,
+          title: 'Goalkeeper Footwork',
+          description: 'Improve agility and positioning with footwork drills',
+          duration: '15-20 mins',
+          players: '2-6',
+          difficulty: 'Beginner'
+        },
+        {
+          id: 110,
+          title: 'Penalty Saves',
+          description: 'Techniques for saving penalty kicks',
+          duration: '10-15 mins',
+          players: '2-6',
+          difficulty: 'Advanced'
         }
       ]
     }
@@ -453,7 +977,7 @@ const PracticeLibrary = ({ onBack }) => {
         </div>
 
         <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm border border-gray-200 rounded-xl p-1">
+          <TabsList className="grid w-full grid-cols-5 bg-white shadow-sm border border-gray-200 rounded-xl p-1">
             {Object.entries(practiceCategories).map(([key, category]) => (
               <TabsTrigger 
                 key={key} 
