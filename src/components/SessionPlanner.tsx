@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, AlertCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Loader2, Play, Save } from 'lucide-react';
 import SessionOverview from '@/components/SessionOverview';
 import SessionPhase from '@/components/SessionPhase';
 import SessionExport from '@/components/SessionExport';
@@ -10,7 +10,9 @@ import ActivityCustomizer from '@/components/ActivityCustomizer';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { recomputeDurations, type SessionPlan } from '@/lib/sessionGenerator';
-import { DRAFT_ID, loadSession, saveDraft, updateSessionPlan, type StoredSession } from '@/lib/sessionStore';
+import { DRAFT_ID, loadSession, saveDraft, updateSessionPlan, createSession, type StoredSession } from '@/lib/sessionStore';
+import QuickAdjust from './QuickAdjust';
+import { replaceActivity } from '@/lib/delivery';
 
 const slug = (s: string, i: number) => `${i}-${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
@@ -24,6 +26,7 @@ const SessionPlanner = () => {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [customizing, setCustomizing] = useState<{ phaseIndex: number; activityIndex: number } | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -45,11 +48,11 @@ const SessionPlanner = () => {
     const plan: SessionPlan = structuredClone(stored.plan);
     plan.phases[customizing.phaseIndex].activities[customizing.activityIndex] = updatedActivity;
     const next = recomputeDurations(plan);
-    setStored({ ...stored, plan: next });
-    setCustomizing(null);
     try {
       if (isDraft) saveDraft(stored.teamData, next);
       else await updateSessionPlan(stored.id, next);
+      setStored({ ...stored, plan: next });
+      setCustomizing(null);
       toast({ title: 'Changes saved' });
     } catch (e: any) {
       toast({ title: "Changes not saved", description: e.message, variant: 'destructive' });
@@ -109,10 +112,15 @@ const SessionPlanner = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isDraft && (
-          <p className="mb-6 rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground">
-            This session is only saved in this browser tab. <Link to="/account" className="underline text-primary">Sign in</Link> to save and share sessions.
-          </p>
+          <div className="mb-6 flex flex-wrap items-center gap-3 border-b border-border pb-4"><p className="text-sm text-muted-foreground">Kept in this browser tab.</p><Button disabled={saving} onClick={async () => {
+            if (!user) { navigate('/account'); return; }
+            setSaving(true);
+            try { const savedId = await createSession(user.id, null, stored.teamData, stored.plan); navigate(`/session/${savedId}`, { replace: true }); }
+            catch (e) { toast({ title: 'Session not saved', description: e instanceof Error ? e.message : '', variant: 'destructive' }); }
+            finally { setSaving(false); }
+          }}><Save />{user ? 'Save session' : 'Sign up to save'}</Button></div>
         )}
+        <div className="flex flex-wrap gap-2 mb-6"><Button asChild size="lg"><Link to={`/session/${id}/coach`}><Play />Coach Mode</Link></Button>{isOwner && <Button asChild variant="outline" size="lg"><Link to={`/block?session=${id}`}>Plan a training block</Link></Button>}<Button asChild variant="ghost" size="lg"><Link to="/sessions">My sessions</Link></Button></div>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <div className="overflow-x-auto -mx-4 px-4">
             <TabsList className="inline-flex w-max min-w-full justify-start glass border border-border/20 rounded-2xl p-2 h-auto">
@@ -135,6 +143,11 @@ const SessionPlanner = () => {
                 phase={phase}
                 phaseIndex={i}
                 onCustomizeActivity={isOwner ? (pi, ai) => setCustomizing({ phaseIndex: pi, activityIndex: ai }) : undefined}
+                renderAdjustment={isOwner ? (activity, ai) => <QuickAdjust activity={activity} team={teamData} onSave={async updated => {
+                  const next = replaceActivity(plan, i, ai, updated);
+                  if (isDraft) saveDraft(teamData, next); else await updateSessionPlan(id, next);
+                  setStored({ ...stored, plan: next });
+                }} /> : undefined}
               />
             </TabsContent>
           ))}

@@ -14,7 +14,7 @@ const ListBlock = ({ title, items }: { title: string; items?: string[] }) =>
     </div>
   ) : null;
 
-const ActivityCard = ({ activity, phaseIndex, activityIndex, onCustomize }: any) => (
+const ActivityCard = ({ activity, phaseIndex, activityIndex, onCustomize, adjustment }: any) => (
   <div className="border rounded-lg p-4 sm:p-6">
     <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
       <h4 className="text-lg font-semibold">{activity.name}</h4>
@@ -53,6 +53,7 @@ const ActivityCard = ({ activity, phaseIndex, activityIndex, onCustomize }: any)
         <PracticeVisualizer activity={activity} />
       </div>
     </div>
+    {adjustment && <div className="mt-6">{adjustment}</div>}
   </div>
 );
 

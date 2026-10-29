@@ -13,7 +13,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { buildSessionPlan } from '@/lib/sessionGenerator';
 import { generateAiPlan } from '@/lib/aiClient';
-import { createSession, saveDraft, DRAFT_ID } from '@/lib/sessionStore';
+import { createSession, saveDraft, loadDraft, DRAFT_ID } from '@/lib/sessionStore';
+import { canGenerateAnonymous } from '@/lib/delivery';
 
 const EMPTY = {
   teamName: '', ageGroup: '', skillLevel: '', playingStyle: '',
@@ -68,6 +69,12 @@ const TeamSetup = () => {
     e.preventDefault();
     setErrors({});
     setFormError('');
+
+    if (!user && !canGenerateAnonymous(Boolean(loadDraft()))) {
+      navigate(`/session/${DRAFT_ID}`);
+      toast({ title: 'Your trial session is ready', description: 'Sign up to save it and plan more sessions.' });
+      return;
+    }
 
     if (!formRateLimiter.canProceed('team-setup-form')) {
       toast({ title: "Too many attempts", description: "Please wait a minute before trying again.", variant: "destructive" });

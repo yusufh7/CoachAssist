@@ -18,6 +18,9 @@ const Body = z.object({
   playingStyle: z.string().max(40).optional().nullable(),
   sessionGoals: z.string().min(1).max(1000),
   currentFocus: z.string().max(1000).optional().nullable(),
+  action: z.enum(['generate', 'adjust']).optional(),
+  adjustment: z.enum(['Too easy', 'Too hard', 'Fewer players', 'More players', 'Players losing focus', 'Wet pitch / less space']).optional(),
+  activity: z.object({ name: z.string().max(200), duration: z.number().int().min(1).max(120), description: z.string().max(3000), setup: z.string().max(3000), equipment: z.string().max(1000), coachingPoints: z.array(z.string().max(1000)).max(10), progressions: z.array(z.string().max(1000)).max(10), regressions: z.array(z.string().max(1000)).max(10) }).optional(),
 });
 
 const Activity = z.object({
@@ -56,11 +59,16 @@ Deno.serve(async (req) => {
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return json({ error: "Invalid input", fields: parsed.error.flatten().fieldErrors }, 400);
   const t = parsed.data;
+  const adjusting = t.action === 'adjust';
+  if (adjusting && (!t.activity || !t.adjustment)) return json({ error: 'Choose a practice and adjustment.' }, 400);
 
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   if (!apiKey) return json({ error: "AI is not configured" }, 500);
 
-  const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const url = Deno.env.get('SUPABASE_URL');
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!url || !serviceKey) return json({ error: 'Service unavailable' }, 500);
+  const admin = createClient(url, serviceKey);
 
   // Who is calling? Signed-in users get a higher daily allowance.
   let userId: string | null = null;
@@ -95,7 +103,8 @@ Rules:
 - Games should use ${FORMAT[t.ageGroup]} formats suitable for ${t.playerCount} players. Say how to split the group, including odd numbers.
 - ${young ? "NO heading practices or deliberate heading for this age group (FA heading guidance)." : "Keep any heading practice minimal and in line with FA heading guidance."}
 - Every activity: 3-5 short coaching points, 2-3 progressions, 2-3 regressions, realistic area size in yards, and grassroots-available equipment.
-- Keep descriptions to 2-3 sentences. Do not invent statistics, endorsements or quotes.`;
+- Keep descriptions to 2-3 sentences. Do not invent statistics, endorsements or quotes.
+${adjusting ? `Return ONLY one replacement activity for the supplied practice. Keep the same learning goal and EXACTLY ${t.activity?.duration} minutes. Apply the requested adjustment. Account for every player, including rotations. Do not generate other practices.` : ''}`;
 
   const prompt = `Team: ${t.teamName}
 Age group: ${t.ageGroup.toUpperCase()}
@@ -104,7 +113,8 @@ Players: ${t.playerCount}
 Session length: ${t.sessionDuration} minutes
 Playing style: ${t.playingStyle || "no preference"}
 Session goals: ${t.sessionGoals}
-Current focus / notes: ${t.currentFocus || "none"}`;
+Current focus / notes: ${t.currentFocus || "none"}
+${adjusting ? `Adjustment: ${t.adjustment}\nOriginal practice: ${JSON.stringify(t.activity)}` : ''}`;
 
   const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(req));
   const provider = createOpenAI({
@@ -119,7 +129,7 @@ Current focus / notes: ${t.currentFocus || "none"}`;
       model: provider.responses(MODEL),
       system,
       prompt,
-      output: Output.object({ schema: PlanSchema }),
+      output: Output.object({ schema: adjusting ? Activity : PlanSchema }),
       abortSignal: req.signal,
       providerOptions: {
         openai: {
@@ -132,6 +142,14 @@ Current focus / notes: ${t.currentFocus || "none"}`;
       },
     });
     const plan = await result.output;
+    if (adjusting) {
+      const checked = Activity.safeParse(plan);
+      if (!checked.success || !t.activity) return json({ error: 'The adjusted practice was unusable. Your original is unchanged.' }, 502);
+      const safetyText = JSON.stringify(checked.data).replace(/\b(no|avoid|without|never|do not|don't)\s+(deliberate\s+)?heading\b/gi, '');
+      if (young && /\b(heading|headers?|headed)\b|\bhead\s+(the\s+)?ball\b/i.test(safetyText)) return json({ error: 'The adjusted practice did not meet age safety rules. Your original is unchanged.' }, 502);
+      await admin.from('ai_generation_log').insert({ user_id: userId, ip_hash: ipHash });
+      return json({ activity: { ...checked.data, duration: t.activity.duration } });
+    }
     await admin.from("ai_generation_log").insert({ user_id: userId, ip_hash: ipHash });
     return json({ plan, remaining: Math.max(0, limit - (count ?? 0) - 1) });
   } catch (err: any) {

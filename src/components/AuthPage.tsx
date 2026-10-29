@@ -56,6 +56,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
         } else {
           setUserProfile(null);
           setUserTeams([]);
+          setUserSessions([]);
         }
       }
     );
@@ -541,6 +542,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
             </TabsContent>
 
             <TabsContent value="sessions">
+              <div className="flex flex-wrap gap-2 mb-4"><Button asChild><Link to="/sessions">Manage my sessions</Link></Button><Button asChild variant="outline"><Link to="/block">Plan a training block</Link></Button></div>
               {userSessions.length === 0 ? (
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center py-12">
