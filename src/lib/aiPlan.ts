@@ -10,7 +10,7 @@ export function normalizeAiPlan(raw: unknown, t: TeamInput): SessionPlan | null 
   const data = object(raw);
   if (['u7', 'u9', 'u11'].includes(t.ageGroup || '') && hasDeliberateHeading(data)) return null;
   const total = Number(t.sessionDuration) || 60;
-  const usable = list(data.phases).map(object).map(p => ({ ...p, activities: list(p.activities).map(object).filter(a => string(a.name)) })).filter(p => string(p.name) && p.activities.length);
+  const usable = list(data.phases).map(object).map(p => ({ name: p.name, duration: p.duration, activities: list(p.activities).map(object).filter(a => string(a.name)) })).filter(p => string(p.name) && p.activities.length);
   if (usable.length < 4 || usable.length > 6 || usable.reduce((sum, p) => sum + p.activities.length, 0) > total) return null;
   const durations = splitMinutes(total, usable.map(p => positive(p.duration)));
   const phases: Phase[] = usable.map((p, i) => {

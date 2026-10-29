@@ -7,7 +7,7 @@ import { createLovableAiGatewayRunIdFetch, getLovableAiGatewayRunId } from "./ru
 import { deliberateHeading, validateGeneratedPlan } from './validation.ts';
 
 const MODEL = "openai/gpt-6-astra";
-const ANON_LIMIT = 3;
+const ANON_LIMIT = 1;
 const USER_LIMIT = 20;
 
 const Body = z.object({
@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
   // Who is calling? Signed-in users get a higher daily allowance.
   let userId: string | null = null;
   const token = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "");
-  if (token) {
+  if (token && token !== Deno.env.get('SUPABASE_ANON_KEY') && !token.startsWith('sb_publishable_')) {
     const { data } = await admin.auth.getUser(token);
     userId = data.user?.id ?? null;
     if (!userId) return json({ error: 'Your sign-in has expired. Sign in again.' }, 401);
@@ -99,7 +99,9 @@ Deno.serve(async (req) => {
   const { count, error: countErr } = userId ? await q.eq("user_id", userId) : await q.eq("ip_hash", ipHash).is("user_id", null);
   if (countErr) return json({ error: "Could not check usage" }, 500);
   const limit = userId ? USER_LIMIT : ANON_LIMIT;
-  if ((count ?? 0) >= limit) {
+  const { data: reserved, error: reservationError } = await admin.rpc('reserve_ai_usage', { p_user_id: userId, p_ip_hash: ipHash });
+  if (reservationError) return json({ error: 'Could not check usage. Please try later.' }, 503);
+  if (!reserved) {
     return json({
       error: userId
         ? `You've reached today's limit of ${limit} AI sessions. Try again tomorrow.`
@@ -172,8 +174,6 @@ ${adjusting ? `Adjustment: ${t.adjustment}\nOriginal practice: ${JSON.stringify(
         if (attempt === 0) { repair = `\nRepair the replacement: ${validation.join('; ')}. No deliberate heading for young groups.`; continue; }
         return json({ error: 'The adjusted practice did not meet safety or setup rules. Your original is unchanged.' }, 502);
       }
-      const { error: logError } = await admin.from('ai_generation_log').insert({ user_id: userId, ip_hash: ipHash });
-      if (logError) return json({ error: 'Could not record usage. Please try later.' }, 503);
       return json({ activity: { ...checked.data, duration: t.activity.duration } });
     }
     const checkedPlan = PlanSchema.parse(plan);
@@ -182,8 +182,6 @@ ${adjusting ? `Adjustment: ${t.adjustment}\nOriginal practice: ${JSON.stringify(
       if (attempt === 0) { repair = `\nRepair the full plan: ${validation.join('; ')}. Return a complete corrected plan.`; continue; }
       return json({ error: 'The AI plan failed safety or setup checks. Use a basic template instead.' }, 502);
     }
-    const { error: logError } = await admin.from("ai_generation_log").insert({ user_id: userId, ip_hash: ipHash });
-    if (logError) return json({ error: 'Could not record usage. Please try later.' }, 503);
     return json({ plan, remaining: Math.max(0, limit - (count ?? 0) - 1) });
     }
     return json({ error: 'Could not validate the plan.' }, 502);

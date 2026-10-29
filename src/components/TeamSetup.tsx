@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ import { createSession, saveDraft, loadDraft, DRAFT_ID } from '@/lib/sessionStor
 import { canGenerateAnonymous } from '@/lib/delivery';
 
 const EMPTY = {
+  pitchSize: '', coachCount: '1', units: 'metres', equipment: ['Balls', 'Cones', 'Bibs'],
   teamName: '', ageGroup: '', skillLevel: '', playingStyle: '',
   sessionGoals: '', sessionDuration: '', playerCount: '', currentFocus: '',
 };
@@ -35,7 +36,8 @@ const TeamSetup = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [formData, setFormData] = useState(EMPTY);
+  const [params] = useSearchParams();
+  const [formData, setFormData] = useState({ ...EMPTY, sessionGoals: params.get('goal') || '' });
   const [teams, setTeams] = useState<any[]>([]);
   const [teamId, setTeamId] = useState<string>(NEW_TEAM);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,6 +59,7 @@ const TeamSetup = () => {
     const t = teams.find((x) => x.id === id);
     if (!t) return;
     setFormData({
+      ...EMPTY,
       teamName: t.name ?? '', ageGroup: t.age_group ?? '', skillLevel: t.skill_level ?? '',
       playingStyle: t.playing_style ?? '', sessionGoals: t.goals ?? '',
       sessionDuration: t.session_duration ? String(t.session_duration) : '',
@@ -146,29 +149,29 @@ const TeamSetup = () => {
   const errCls = (f: string) => (errors[f] ? "border-destructive" : "");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
-      <header className="bg-white shadow-sm border-b border-green-200">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Button variant="ghost" onClick={() => navigate('/')}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">Team Setup</h1>
+            <h1 className="text-xl font-bold text-foreground">New session</h1>
             <div />
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
+        <section className="max-w-2xl mx-auto">
+          <div className="mb-8">
             <CardTitle className="text-2xl text-center">Set Up Your Training Session</CardTitle>
             <CardDescription className="text-center">
               Tell us about your team so we can build a session plan
             </CardDescription>
-          </CardHeader>
-          <CardContent>
+          </div>
+          <div>
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               {formError && (
                 <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive" role="alert">
@@ -274,6 +277,8 @@ const TeamSetup = () => {
                 <FieldError msg={errors.sessionGoals} />
               </div>
 
+              <div className="grid sm:grid-cols-2 gap-6"><div><Label htmlFor="pitchSize">Pitch available (optional)</Label><Input id="pitchSize" placeholder="e.g. 30 × 20, half pitch" value={formData.pitchSize} onChange={e => update('pitchSize', e.target.value)} /></div><div><Label htmlFor="coachCount">Number of coaches</Label><Input id="coachCount" type="number" min={1} max={10} value={formData.coachCount} onChange={e => update('coachCount', e.target.value)} /><FieldError msg={errors.coachCount} /></div><div><Label htmlFor="units">Units</Label><Select value={formData.units} onValueChange={v => update('units', v)}><SelectTrigger id="units"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="metres">Metres</SelectItem><SelectItem value="yards">Yards</SelectItem></SelectContent></Select></div><fieldset><legend className="text-sm font-medium mb-2">Equipment available</legend><div className="flex flex-wrap gap-3">{['Balls','Cones','Bibs','Goals','Mini goals'].map(item => <label key={item} className="flex gap-2 items-center text-sm"><input type="checkbox" checked={formData.equipment.includes(item)} onChange={e => setFormData(p => ({ ...p, equipment: e.target.checked ? [...p.equipment, item] : p.equipment.filter(x => x !== item) }))} />{item}</label>)}</div></fieldset></div>
+
               <div>
                 <Label htmlFor="currentFocus">Current Team Focus Areas (optional)</Label>
                 <Textarea id="currentFocus" maxLength={500} value={formData.currentFocus}
@@ -289,13 +294,13 @@ const TeamSetup = () => {
                 </p>
               )}
 
-              <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50" disabled={isSubmitting}>
-                {isSubmitting ? "Planning your session (about 30 seconds)..." : "Generate Training Session"}
+              <Button type="submit" className="w-full whitespace-normal min-h-12" disabled={isSubmitting}>
+                {isSubmitting ? "Planning your session…" : "Generate training session"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+        </section>
       </main>
     </div>
   );

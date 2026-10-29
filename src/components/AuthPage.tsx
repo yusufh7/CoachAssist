@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { passwordCriteria, validPassword } from '@/lib/password';
 import { ArrowLeft, User as UserIcon, LogOut, Users, Calendar } from 'lucide-react';
 
 interface AuthPageProps {
@@ -16,6 +17,7 @@ interface AuthPageProps {
 }
 
 interface SignUpData {
+  confirmPassword: string;
   email: string;
   password: string;
   displayName: string;
@@ -28,6 +30,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [signupData, setSignupData] = useState<SignUpData>({
+    confirmPassword: '',
     email: '',
     password: '',
     displayName: ''
@@ -119,13 +122,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
   };
 
   const validatePassword = (password: string) => {
-    const criteria = {
-      length: password.length >= 8,
-      uppercase: /[A-Z]/.test(password),
-      lowercase: /[a-z]/.test(password),
-      number: /\d/.test(password),
-      special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
-    };
+    const criteria = passwordCriteria(password);
 
     const isValid = Object.values(criteria).every(Boolean);
     return { isValid, criteria };
@@ -133,6 +130,10 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
 
   const handleSignUpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validPassword(signupData.password, signupData.confirmPassword)) {
+      toast({ title: 'Check your password', description: signupData.password !== signupData.confirmPassword ? 'Passwords must match.' : 'Password must meet all requirements.', variant: 'destructive' });
+      return;
+    }
     
     const { isValid } = validatePassword(signupData.password);
     if (!isValid) {
@@ -191,7 +192,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
       });
       
       setIsSignupOpen(false);
-      setSignupData({ email: '', password: '', displayName: '' });
+      setSignupData({ email: '', password: '', displayName: '', confirmPassword: '' });
     } catch (error) {
       console.error('Unexpected signup error:', error);
       toast({
@@ -342,7 +343,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                         {signupData.password && (
                           <div className="mt-2 text-sm space-y-1">
                             {Object.entries(validatePassword(signupData.password).criteria).map(([key, valid]) => (
-                              <div key={key} className={`flex items-center gap-2 ${valid ? 'text-green-600' : 'text-red-600'}`}>
+                              <div key={key} className={`flex items-center gap-2 ${valid ? 'text-success' : 'text-destructive'}`}>
                                 <span>{valid ? '✓' : '✗'}</span>
                                 <span>
                                   {key === 'length' && '8+ characters'}
@@ -356,6 +357,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                           </div>
                         )}
                       </div>
+                      <div><Label htmlFor="confirmPassword">Repeat password</Label><Input id="confirmPassword" type="password" autoComplete="new-password" required value={signupData.confirmPassword} onChange={e => setSignupData(prev => ({ ...prev, confirmPassword: e.target.value }))} /></div>
                       <Button type="submit" className="w-full">
                         Create Account
                       </Button>
@@ -402,6 +404,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                       <Button type="submit" className="w-full">
                         Sign In
                       </Button>
+                      <Button asChild variant="link"><Link to="/account/recovery">Forgot your password?</Link></Button>
                     </form>
                   </DialogContent>
                 </Dialog>
