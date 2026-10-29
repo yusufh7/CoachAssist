@@ -8,3 +8,4 @@
 - [x] Phase 3: progressive 4–6 session block planner
 - [x] Phase 3: verify signed-in and anonymous delivery flows (real four-session block, persisted AI adjustment, mobile timer, trial/save prompt; physical-device wake lock not verified)
 - [ ] Phase 4: honest, shippable product
+- [ ] Pre-Phase 4: full regression checks and acceptance report
