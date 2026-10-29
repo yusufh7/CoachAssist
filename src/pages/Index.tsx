@@ -29,7 +29,10 @@ const Index = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <Button variant="outline" onClick={() => navigate('/account')} className="max-w-[45%] truncate">
+              {user ? 'My Account' : 'Sign In / Sign Up'}
+            </Button>
+          </div>
         </div>
       </header>
 
