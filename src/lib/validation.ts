@@ -1,86 +1,76 @@
 import { z } from "zod";
-import DOMPurify from "dompurify";
 
-// Input sanitization utility
-export const sanitizeInput = (input: string): string => {
-  return DOMPurify.sanitize(input, { 
-    ALLOWED_TAGS: [], 
-    ALLOWED_ATTR: [] 
-  }).trim();
-};
+/** Escape text for any context where it is injected as raw HTML (React already escapes JSX). */
+export const escapeHtml = (input: unknown): string =>
+  String(input ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
-// Team setup form validation schema
+const optionalText = (max: number, label: string) =>
+  z
+    .string()
+    .max(max, `${label} must be ${max} characters or fewer`)
+    .optional()
+    .transform((v) => (v ?? "").trim());
+
+// Raw text is stored as typed; we only trim on submit.
 export const teamSetupSchema = z.object({
   teamName: z
-    .string()
+    .string({ required_error: "Team name is required" })
+    .trim()
     .min(1, "Team name is required")
-    .max(100, "Team name must be less than 100 characters")
-    .regex(/^[a-zA-Z0-9\s\-&']+$/, "Team name contains invalid characters")
-    .transform(sanitizeInput),
-  
+    .max(100, "Team name must be 100 characters or fewer")
+    .regex(/^[\p{L}\p{N}\s.'’&()\/-]+$/u, "Use letters, numbers, spaces and . ' ’ - & ( ) / only"),
+
   ageGroup: z.enum(["u7", "u9", "u11", "u13", "u15", "u17", "adult"], {
-    required_error: "Age group is required"
+    errorMap: () => ({ message: "Choose an age group" }),
   }),
-  
+
   skillLevel: z.enum(["beginner", "developing", "intermediate", "advanced", "elite"], {
-    required_error: "Skill level is required"
+    errorMap: () => ({ message: "Choose a skill level" }),
   }),
-  
-  playerCount: z
-    .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(
-      z.number()
-        .min(1, "Must have at least 1 player")
-        .max(50, "Maximum 50 players allowed")
-    ),
-  
+
+  playerCount: z.coerce
+    .number({ invalid_type_error: "Enter the number of players" })
+    .int("Whole numbers only")
+    .min(1, "At least 1 player")
+    .max(50, "Maximum 50 players"),
+
   sessionDuration: z.enum(["45", "60", "75", "90", "120"], {
-    required_error: "Session duration is required"
+    errorMap: () => ({ message: "Choose a session length" }),
   }),
-  
-  playingStyle: z.enum([
-    "possession", 
-    "counter", 
-    "pressing", 
-    "direct", 
-    "flexible"
-  ]).optional(),
-  
-  sessionGoals: z
-    .string()
-    .min(1, "Session goals are required")
-    .max(500, "Session goals must be less than 500 characters")
-    .transform(sanitizeInput),
-  
-  currentFocus: z
-    .string()
-    .max(500, "Current focus must be less than 500 characters")
-    .transform(sanitizeInput)
+
+  playingStyle: z
+    .union([z.enum(["possession", "counter", "pressing", "direct", "flexible"]), z.literal("")])
     .optional()
+    .transform((v) => v || ""),
+
+  sessionGoals: z
+    .string({ required_error: "Session goals are required" })
+    .trim()
+    .min(1, "Session goals are required")
+    .max(500, "Session goals must be 500 characters or fewer"),
+
+  currentFocus: optionalText(500, "Current focus"),
 });
 
 export type TeamSetupFormData = z.infer<typeof teamSetupSchema>;
 
-// Rate limiting utility for form submissions
+// Simple client-side throttle for repeated submissions.
 class RateLimiter {
   private attempts: Map<string, number[]> = new Map();
   private readonly maxAttempts = 5;
-  private readonly timeWindow = 60000; // 1 minute
+  private readonly timeWindow = 60000;
 
   canProceed(identifier: string): boolean {
     const now = Date.now();
-    const attempts = this.attempts.get(identifier) || [];
-    
-    // Clean old attempts
-    const recentAttempts = attempts.filter(time => now - time < this.timeWindow);
-    
-    if (recentAttempts.length >= this.maxAttempts) {
-      return false;
-    }
-    
-    recentAttempts.push(now);
-    this.attempts.set(identifier, recentAttempts);
+    const recent = (this.attempts.get(identifier) || []).filter((t) => now - t < this.timeWindow);
+    if (recent.length >= this.maxAttempts) return false;
+    recent.push(now);
+    this.attempts.set(identifier, recent);
     return true;
   }
 }
