@@ -99,7 +99,10 @@ const SessionPlanner = () => {
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back
           </Button>
-          <h1 className="text-lg sm:text-2xl font-bold text-primary text-center flex-1 min-w-0 truncate">{plan.title}</h1>
+          <div className="flex-1 min-w-0 text-center">
+            <h1 className="text-lg sm:text-2xl font-bold text-primary truncate">{plan.title}</h1>
+            <p className="text-xs text-muted-foreground">{plan.generator === 'ai' ? 'AI-planned session – check it suits your players' : 'Template session'}</p>
+          </div>
           <SessionExport stored={stored} isOwner={isOwner && !isDraft} onChange={setStored} />
         </div>
       </header>

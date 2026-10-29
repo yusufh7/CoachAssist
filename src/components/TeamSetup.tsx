@@ -283,7 +283,7 @@ const TeamSetup = () => {
               )}
 
               <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50" disabled={isSubmitting}>
-                {isSubmitting ? "Building session..." : "Generate Training Session"}
+                {isSubmitting ? "Planning your session (about 30 seconds)..." : "Generate Training Session"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </form>
