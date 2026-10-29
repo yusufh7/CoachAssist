@@ -54,8 +54,21 @@ export async function createSession(userId: string, teamId: string | null, teamD
 }
 
 export async function updateSessionPlan(id: string, plan: SessionPlan) {
-  const { error } = await supabase.from('training_sessions').update({ plan: plan as any, title: plan.title }).eq('id', id);
+  const { data, error } = await supabase.from('training_sessions').update({ plan: plan as any, title: plan.title }).eq('id', id).select('id').single();
   if (error) throw error;
+  if (!data) throw new Error('Session not saved');
+}
+
+export async function listSessions(userId: string) {
+  const { data, error } = await supabase.from('training_sessions').select('*').eq('user_id', userId).order('updated_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteSession(id: string) {
+  const { data, error } = await supabase.from('training_sessions').delete().eq('id', id).select('id').single();
+  if (error) throw error;
+  if (!data) throw new Error('Session not deleted');
 }
 
 export async function setSessionPublic(id: string, isPublic: boolean) {
