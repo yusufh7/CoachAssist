@@ -1,189 +1,140 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Loader2 } from 'lucide-react';
 import SessionOverview from '@/components/SessionOverview';
 import SessionPhase from '@/components/SessionPhase';
 import SessionExport from '@/components/SessionExport';
 import ActivityCustomizer from '@/components/ActivityCustomizer';
-import SessionGenerator from '@/components/SessionGenerator';
-import PremiumLoading from '@/components/ui/premium-loading';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { recomputeDurations, type SessionPlan } from '@/lib/sessionGenerator';
+import { DRAFT_ID, loadSession, saveDraft, updateSessionPlan, type StoredSession } from '@/lib/sessionStore';
 
-const SessionPlanner = ({ teamData, onBack }) => {
-  const [sessionPlan, setSessionPlan] = useState(null);
+const slug = (s: string, i: number) => `${i}-${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
+const SessionPlanner = () => {
+  const { id = DRAFT_ID } = useParams();
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+  const { toast } = useToast();
+  const [stored, setStored] = useState<StoredSession | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
-  const [customizingActivity, setCustomizingActivity] = useState(null);
+  const [customizing, setCustomizing] = useState<{ phaseIndex: number; activityIndex: number } | null>(null);
 
   useEffect(() => {
-    const generateSession = () => {
-      console.log('Starting session generation with:', teamData);
-      
-      try {
-        if (!teamData) {
-          throw new Error('No team data provided');
-        }
+    if (authLoading) return;
+    setLoading(true);
+    loadSession(id)
+      .then((s) => {
+        if (!s) setError(id === DRAFT_ID ? 'No session in progress. Start a new one.' : "This session doesn't exist or isn't shared.");
+        else { setStored(s); setError(''); }
+      })
+      .catch((e) => setError(`Couldn't load the session: ${e.message}`))
+      .finally(() => setLoading(false));
+  }, [id, authLoading, user?.id]);
 
-        setTimeout(() => {
-          try {
-            const phases = SessionGenerator.generateSessionContent(teamData);
-            
-            if (!phases || phases.length === 0) {
-              throw new Error('Failed to generate session phases');
-            }
+  const isDraft = id === DRAFT_ID;
+  const isOwner = isDraft || (!!user && stored?.userId === user.id);
 
-            const generatedSession = {
-              title: `${teamData.teamName || 'Team'} Training Session`,
-              duration: parseInt(teamData.sessionDuration) || 60,
-              objectives: Array.isArray(teamData.sessionGoals) 
-                ? teamData.sessionGoals 
-                : (teamData.sessionGoals || '').split(',').map(goal => goal.trim()).filter(goal => goal),
-              phases: phases,
-              ageGroup: teamData.ageGroup,
-              skillLevel: teamData.skillLevel,
-              playerCount: teamData.playerCount
-            };
-            
-            console.log('Generated session plan:', generatedSession);
-            setSessionPlan(generatedSession);
-            setError(null);
-            setLoading(false);
-          } catch (err) {
-            console.error('Error generating session:', err);
-            setError('Failed to generate session plan. Please try again.');
-            setLoading(false);
-          }
-        }, 1500);
-      } catch (err) {
-        console.error('Error in generateSession:', err);
-        setError('Invalid team data. Please go back and check your inputs.');
-        setLoading(false);
-      }
-    };
-
-    generateSession();
-  }, [teamData]);
-
-  const handleCustomizeActivity = (phaseIndex, activityIndex) => {
-    setCustomizingActivity({ phaseIndex, activityIndex });
-  };
-
-  const handleSaveCustomization = (updatedActivity) => {
-    const newSessionPlan = { ...sessionPlan };
-    newSessionPlan.phases[customizingActivity.phaseIndex].activities[customizingActivity.activityIndex] = updatedActivity;
-    setSessionPlan(newSessionPlan);
-    setCustomizingActivity(null);
+  const handleSave = async (updatedActivity) => {
+    if (!stored || !customizing) return;
+    const plan: SessionPlan = structuredClone(stored.plan);
+    plan.phases[customizing.phaseIndex].activities[customizing.activityIndex] = updatedActivity;
+    const next = recomputeDurations(plan);
+    setStored({ ...stored, plan: next });
+    setCustomizing(null);
+    try {
+      if (isDraft) saveDraft(stored.teamData, next);
+      else await updateSessionPlan(stored.id, next);
+      toast({ title: 'Changes saved' });
+    } catch (e: any) {
+      toast({ title: "Changes not saved", description: e.message, variant: 'destructive' });
+    }
   };
 
   if (loading) {
     return (
-      <PremiumLoading 
-        title="Generating Your Session Plan"
-        subtitle="Creating a customized training session based on your team's needs and UEFA guidelines..."
-      />
+      <div className="min-h-screen flex items-center justify-center text-muted-foreground gap-2">
+        <Loader2 className="w-5 h-5 animate-spin" /> Loading session...
+      </div>
     );
   }
 
-  if (error) {
+  if (error || !stored) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50 flex items-center justify-center">
-        <div className="w-96 bg-white rounded-2xl shadow-xl p-8 text-center border border-red-200">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold mb-3 text-gray-800">Session Generation Failed</h3>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <Button onClick={onBack} className="w-full">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Setup
-          </Button>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-sm bg-card rounded-2xl shadow-xl p-8 text-center border border-destructive/30">
+          <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+          <h3 className="text-xl font-semibold mb-3">Session unavailable</h3>
+          <p className="text-muted-foreground mb-6">{error}</p>
+          <Button asChild className="w-full"><Link to="/plan">Plan a new session</Link></Button>
         </div>
       </div>
     );
   }
 
-  if (customizingActivity) {
-    const activity = sessionPlan.phases[customizingActivity.phaseIndex].activities[customizingActivity.activityIndex];
+  const { plan, teamData } = stored;
+
+  if (customizing) {
     return (
       <ActivityCustomizer
-        activity={activity}
-        onSave={handleSaveCustomization}
-        onCancel={() => setCustomizingActivity(null)}
+        activity={plan.phases[customizing.phaseIndex].activities[customizing.activityIndex]}
+        onSave={handleSave}
+        onCancel={() => setCustomizing(null)}
       />
     );
   }
 
+  const triggerCls = "rounded-xl whitespace-nowrap px-4 data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-medium";
+
   return (
     <div className="min-h-screen bg-gradient-surface">
       <header className="glass border-b border-border/50 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <Button 
-              variant="ghost" 
-              onClick={onBack} 
-              className="hover:bg-primary/5 transition-all duration-300 hover:scale-105"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Dashboard
-            </Button>
-            <div className="text-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-                {sessionPlan.title}
-              </h1>
-              <p className="text-xs text-muted-foreground font-medium tracking-wide">
-                PROFESSIONAL SESSION PLAN
-              </p>
-            </div>
-            <SessionExport sessionPlan={sessionPlan} teamData={teamData} />
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+          <Button variant="ghost" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}>
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-lg sm:text-2xl font-bold text-primary text-center flex-1 min-w-0 truncate">{plan.title}</h1>
+          <SessionExport stored={stored} isOwner={isOwner && !isDraft} onChange={setStored} />
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {isDraft && (
+          <p className="mb-6 rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground">
+            This session is only saved in this browser tab. <Link to="/account" className="underline text-primary">Sign in</Link> to save and share sessions.
+          </p>
+        )}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4 glass border border-border/20 rounded-2xl p-2 shadow-premium">
-            <TabsTrigger 
-              value="overview" 
-              className="rounded-xl data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-medium"
-            >
-              Overview
-            </TabsTrigger>
-            <TabsTrigger 
-              value="warm-up" 
-              className="rounded-xl data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-medium"
-            >
-              Warm-Up
-            </TabsTrigger>
-            <TabsTrigger 
-              value="technical-practice" 
-              className="rounded-xl data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-medium"
-            >
-              Main Session
-            </TabsTrigger>
-            <TabsTrigger 
-              value="cool-down" 
-              className="rounded-xl data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-medium"
-            >
-              Cool-Down
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto -mx-4 px-4">
+            <TabsList className="inline-flex w-max min-w-full justify-start glass border border-border/20 rounded-2xl p-2 h-auto">
+              <TabsTrigger value="overview" className={triggerCls}>Overview</TabsTrigger>
+              {plan.phases.map((p, i) => (
+                <TabsTrigger key={i} value={slug(p.name, i)} className={triggerCls}>
+                  {p.name} <span className="ml-1 opacity-70 text-xs">{p.duration}′</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
 
           <TabsContent value="overview" className="space-y-6">
-            <SessionOverview sessionPlan={sessionPlan} teamData={teamData} />
+            <SessionOverview sessionPlan={plan} teamData={teamData} />
           </TabsContent>
 
-          {sessionPlan.phases.map((phase, phaseIndex) => {
-            const tabValue = phase.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-            return (
-              <TabsContent key={phaseIndex} value={tabValue} className="space-y-6">
-                <SessionPhase
-                  phase={phase}
-                  phaseIndex={phaseIndex}
-                  onCustomizeActivity={handleCustomizeActivity}
-                />
-              </TabsContent>
-            );
-          })}
+          {plan.phases.map((phase, i) => (
+            <TabsContent key={i} value={slug(phase.name, i)} className="space-y-6">
+              <SessionPhase
+                phase={phase}
+                phaseIndex={i}
+                onCustomizeActivity={isOwner ? (pi, ai) => setCustomizing({ phaseIndex: pi, activityIndex: ai }) : undefined}
+              />
+            </TabsContent>
+          ))}
         </Tabs>
       </main>
     </div>
