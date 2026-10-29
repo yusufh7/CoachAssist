@@ -1,58 +1,12 @@
-import { useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import TeamSetup from '@/components/TeamSetup';
-import SessionPlanner from '@/components/SessionPlanner';
-import PracticeLibrary from '@/components/PracticeLibrary';
-import AuthPage from '@/components/AuthPage';
 import { Users, Target, PlayCircle, FileText, Award, Zap, Shield } from 'lucide-react';
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState('dashboard');
-  const [teamData, setTeamData] = useState(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-      }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const handleTeamSetup = (data: any) => {
-    setTeamData(data);
-    setCurrentView('planning');
-  };
-
-  if (currentView === 'teamSetup') {
-    return <TeamSetup onComplete={handleTeamSetup} user={user} />;
-  }
-
-  if (currentView === 'planning' && teamData) {
-    return <SessionPlanner teamData={teamData} onBack={() => setCurrentView('dashboard')} />;
-  }
-
-  if (currentView === 'practice-library') {
-    return <PracticeLibrary onBack={() => setCurrentView('dashboard')} />;
-  }
-
-  if (currentView === 'account') {
-    return <AuthPage onBack={() => setCurrentView('dashboard')} />;
-  }
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-surface">
@@ -76,22 +30,6 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="hidden md:flex items-center space-x-2 text-sm text-muted-foreground">
-                <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                <span className="font-medium">Live Platform</span>
-              </div>
-              <Button 
-                variant="outline" 
-                onClick={() => setCurrentView('account')}
-                className="flex items-center gap-2"
-              >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                {user ? `Welcome, ${user.email}` : 'Sign In / Sign Up'}
-              </Button>
-            </div>
-          </div>
         </div>
       </header>
 
@@ -99,7 +37,7 @@ const Index = () => {
       <section 
         className="relative overflow-hidden py-20 md:py-32"
         style={{
-          backgroundImage: `var(--gradient-hero), url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1993&q=80')`,
+          backgroundImage: `var(--gradient-hero), url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=70')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlendMode: 'overlay'
@@ -128,7 +66,7 @@ const Index = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                onClick={() => setCurrentView('teamSetup')}
+                onClick={() => navigate('/plan')}
                 size="lg"
                 className="btn-hero px-12 py-4 text-xl rounded-2xl"
               >
@@ -136,7 +74,7 @@ const Index = () => {
                 <PlayCircle className="ml-3 w-6 h-6" />
               </Button>
               <Button 
-                onClick={() => setCurrentView('practice-library')}
+                onClick={() => navigate('/library')}
                 variant="outline"
                 size="lg"
                 className="px-12 py-4 text-xl rounded-2xl bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
@@ -156,7 +94,7 @@ const Index = () => {
           <div 
             className="text-center mb-16 relative py-16 rounded-3xl overflow-hidden"
             style={{
-              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=3882&q=80')`,
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=70')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -170,7 +108,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
             <Card 
               className="card-premium group cursor-pointer animate-fade-in-scale" 
-              onClick={() => setCurrentView('teamSetup')}
+              onClick={() => navigate('/plan')}
               style={{animationDelay: '0.1s'}}
             >
               <CardHeader className="text-center pb-6 pt-8">
@@ -179,7 +117,7 @@ const Index = () => {
                 </div>
                 <CardTitle className="text-xl font-bold text-card-foreground mb-3">New Session</CardTitle>
                 <CardDescription className="text-muted-foreground text-base leading-relaxed">
-                  Set up your team and create a professional training session with AI assistance
+                  Set up your team and get a full session plan in seconds
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -201,7 +139,7 @@ const Index = () => {
 
             <Card 
               className="card-premium group cursor-pointer animate-fade-in-scale" 
-              onClick={() => setCurrentView('practice-library')}
+              onClick={() => navigate('/library')}
               style={{animationDelay: '0.3s'}}
             >
               <CardHeader className="text-center pb-6 pt-8">
@@ -210,7 +148,7 @@ const Index = () => {
                 </div>
                 <CardTitle className="text-xl font-bold text-card-foreground mb-3">Practice Library</CardTitle>
                 <CardDescription className="text-muted-foreground text-base leading-relaxed">
-                  Browse 500+ professional coaching practices and drills
+                  Browse practices organised by the principles of play
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -235,7 +173,7 @@ const Index = () => {
           <div 
             className="glass rounded-3xl shadow-premium p-12 border border-border/20 animate-fade-in-scale relative overflow-hidden"
             style={{
-              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=7360&q=80')`,
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=70')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -269,7 +207,7 @@ const Index = () => {
                 </div>
                 <h4 className="text-2xl font-bold mb-4 text-foreground">AI-Powered Intelligence</h4>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  Advanced AI analyzes your team's needs and generates personalized training sessions with visual diagrams and progressions
+                  Sessions are built around your team's age, ability, numbers and goals, with progressions and regressions
                 </p>
               </div>
               
@@ -288,18 +226,18 @@ const Index = () => {
             <div 
               className="text-center mt-16 p-8 rounded-2xl border border-primary/20 relative overflow-hidden"
               style={{
-                backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.93)), url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=3543&q=80')`,
+                backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.93)), url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=70')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
             >
               <h4 className="text-2xl font-bold text-foreground mb-4">Ready to Transform Your Coaching?</h4>
-              <p className="text-muted-foreground mb-6 text-lg">Join thousands of coaches creating championship-level training sessions</p>
+              <p className="text-muted-foreground mb-6 text-lg">Create a free account to save your teams and sessions</p>
               <Button 
-                onClick={() => setCurrentView('account')}
+                onClick={() => navigate('/account')}
                 className="btn-premium px-8 py-3 text-lg rounded-xl"
               >
-                Start Free Trial
+                Create Free Account
               </Button>
             </div>
           </div>
