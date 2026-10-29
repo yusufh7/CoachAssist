@@ -319,7 +319,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                           required
                         />
                       </div>
-                      <div>
+                      <div className="relative">
                         <Label htmlFor="password">Password</Label>
                         <Input
                           id="password"
