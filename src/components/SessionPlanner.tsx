@@ -13,6 +13,7 @@ import { recomputeDurations, type SessionPlan } from '@/lib/sessionGenerator';
 import { DRAFT_ID, loadSession, saveDraft, updateSessionPlan, createSession, type StoredSession } from '@/lib/sessionStore';
 import QuickAdjust from './QuickAdjust';
 import { replaceActivity } from '@/lib/delivery';
+import { SAFEGUARDING } from '@/lib/safety';
 
 const slug = (s: string, i: number) => `${i}-${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
@@ -54,8 +55,8 @@ const SessionPlanner = () => {
       setStored({ ...stored, plan: next });
       setCustomizing(null);
       toast({ title: 'Changes saved' });
-    } catch (e: any) {
-      toast({ title: "Changes not saved", description: e.message, variant: 'destructive' });
+    } catch (e: unknown) {
+      toast({ title: "Changes not saved", description: e instanceof Error ? e.message : 'Please try again.', variant: 'destructive' });
     }
   };
 
@@ -92,11 +93,11 @@ const SessionPlanner = () => {
     );
   }
 
-  const triggerCls = "rounded-xl whitespace-nowrap px-4 data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-medium";
+  const triggerCls = "rounded-md whitespace-nowrap px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium";
 
   return (
     <div className="min-h-screen bg-gradient-surface">
-      <header className="glass border-b border-border/50 sticky top-0 z-50">
+      <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
           <Button variant="ghost" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}>
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -123,7 +124,7 @@ const SessionPlanner = () => {
         <div className="flex flex-wrap gap-2 mb-6"><Button asChild size="lg"><Link to={`/session/${id}/coach`}><Play />Coach Mode</Link></Button>{isOwner && <Button asChild variant="outline" size="lg"><Link to={`/block?session=${id}`}>Plan a training block</Link></Button>}<Button asChild variant="ghost" size="lg"><Link to="/sessions">My sessions</Link></Button></div>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <div className="overflow-x-auto -mx-4 px-4">
-            <TabsList className="inline-flex w-max min-w-full justify-start glass border border-border/20 rounded-2xl p-2 h-auto">
+            <TabsList className="inline-flex w-max min-w-full justify-start bg-card border border-border rounded-lg p-2 h-auto">
               <TabsTrigger value="overview" className={triggerCls}>Overview</TabsTrigger>
               {plan.phases.map((p, i) => (
                 <TabsTrigger key={i} value={slug(p.name, i)} className={triggerCls}>
@@ -152,6 +153,7 @@ const SessionPlanner = () => {
             </TabsContent>
           ))}
         </Tabs>
+        <p className="text-xs text-muted-foreground mt-10 border-t border-border pt-5">{SAFEGUARDING}</p>
       </main>
     </div>
   );

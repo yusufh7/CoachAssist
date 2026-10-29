@@ -15,6 +15,7 @@ import { buildSessionPlan } from '@/lib/sessionGenerator';
 import { generateAiPlan } from '@/lib/aiClient';
 import { createSession, saveDraft, loadDraft, DRAFT_ID } from '@/lib/sessionStore';
 import { canGenerateAnonymous } from '@/lib/delivery';
+import type { Database } from '@/integrations/supabase/types';
 
 const EMPTY = {
   pitchSize: '', coachCount: '1', units: 'metres', equipment: ['Balls', 'Cones', 'Bibs'],
@@ -38,7 +39,7 @@ const TeamSetup = () => {
   const { user } = useAuth();
   const [params] = useSearchParams();
   const [formData, setFormData] = useState({ ...EMPTY, sessionGoals: params.get('goal') || '' });
-  const [teams, setTeams] = useState<any[]>([]);
+  const [teams, setTeams] = useState<Database['public']['Tables']['teams']['Row'][]>([]);
   const [teamId, setTeamId] = useState<string>(NEW_TEAM);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -132,9 +133,9 @@ const TeamSetup = () => {
     try {
       const id = await createSession(user.id, savedTeamId, data, plan);
       navigate(`/session/${id}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       saveDraft(data, plan);
-      toast({ title: "Session not saved", description: `${err?.message ?? 'Unknown error'}. It's kept on this device for now.`, variant: "destructive" });
+      toast({ title: "Session not saved", description: `${err instanceof Error ? err.message : 'Unknown error'}. It's kept on this device for now.`, variant: "destructive" });
       navigate(`/session/${DRAFT_ID}`);
     } finally {
       setIsSubmitting(false);

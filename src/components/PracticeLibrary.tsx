@@ -7,8 +7,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Link } from "react-router-dom";
 import { ArrowLeft, Search, Play, Users, Target, Shield, Zap } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { buildSessionPlan } from '@/lib/sessionGenerator';
-import ActivityCard from '@/components/ActivityCard';
 
 interface PracticeSummary { id: number; title: string; description: string; duration: string; players: string; difficulty: string; category?: string }
 const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
@@ -118,7 +116,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
           players: '8-12',
           difficulty: 'Advanced'
         },
-        // Additional FA practices from learn.englandfootball.com
+        // Additional practice themes; provenance is not verified.
         {
           id: 47,
           title: 'Dribbling - Effective Techniques',
@@ -374,7 +372,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
           players: '10-16',
           difficulty: 'Beginner'
         },
-        // Additional FA pressing and defensive practices
+        // Pressing and defensive themes
         {
           id: 66,
           title: 'Practising the Press',
@@ -582,7 +580,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
           players: '10-16',
           difficulty: 'Advanced'
         },
-        // Additional FA set piece practices
+        // Set-piece themes
         {
           id: 81,
           title: 'Short Corner Routines',
@@ -766,7 +764,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
           players: '10-20',
           difficulty: 'Beginner'
         },
-        // Additional FA physical and finishing practices
+        // Physical and finishing themes
         {
           id: 91,
           title: 'Goalkeeping - Shot Stopping',
@@ -1032,7 +1030,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
                         </div>
                       </div>
                       <Button className="w-full" onClick={() => setSelected({ ...practice, category: category.title })}>
-                        View Practice
+                        View theme
                       </Button>
                     </CardContent>
                   </Card>

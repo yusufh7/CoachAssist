@@ -182,7 +182,7 @@ ${adjusting ? `Adjustment: ${t.adjustment}\nOriginal practice: ${JSON.stringify(
       if (attempt === 0) { repair = `\nRepair the full plan: ${validation.join('; ')}. Return a complete corrected plan.`; continue; }
       return json({ error: 'The AI plan failed safety or setup checks. Use a basic template instead.' }, 502);
     }
-    return json({ plan, remaining: Math.max(0, limit - (count ?? 0) - 1) });
+    return json({ plan });
     }
     return json({ error: 'Could not validate the plan.' }, 502);
   } catch (err: unknown) {

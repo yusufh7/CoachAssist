@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { passwordCriteria, validPassword } from '@/lib/password';
+import type { Database } from '@/integrations/supabase/types';
 import { ArrowLeft, User as UserIcon, LogOut, Users, Calendar } from 'lucide-react';
 
 interface AuthPageProps {
@@ -39,9 +40,9 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
     email: '',
     password: ''
   });
-  const [userProfile, setUserProfile] = useState<any>(null);
-  const [userTeams, setUserTeams] = useState<any[]>([]);
-  const [userSessions, setUserSessions] = useState<any[]>([]);
+  const [userProfile, setUserProfile] = useState<Database['public']['Tables']['profiles']['Row'] | null>(null);
+  const [userTeams, setUserTeams] = useState<Database['public']['Tables']['teams']['Row'][]>([]);
+  const [userSessions, setUserSessions] = useState<{ id: string; title: string; created_at: string; is_public: boolean }[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
