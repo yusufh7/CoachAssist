@@ -18,20 +18,28 @@ const raw = {
 describe('normalizeAiPlan', () => {
   for (const d of [45, 60, 75, 90, 120]) {
     it(`phases and activities sum exactly to ${d} minutes`, () => {
-      const p = normalizeAiPlan(raw, { sessionDuration: d, ageGroup: 'u13' })!;
+      const p = normalizeAiPlan(raw, { sessionDuration: d, ageGroup: 'u13' });
+      if (!p) throw new Error('Expected usable plan');
       expect(p.phases.reduce((a, b) => a + b.duration, 0)).toBe(d);
       for (const ph of p.phases) expect(ph.activities.reduce((a, b) => a + b.duration, 0)).toBe(ph.duration);
     });
   }
-  it('removes heading for U11 and below', () => {
-    const p = normalizeAiPlan(raw, { sessionDuration: 60, ageGroup: 'u9' })!;
-    expect(JSON.stringify(p)).not.toMatch(/heading/i);
+  it('rejects heading for U11 and below, including description and setup', () => {
+    expect(normalizeAiPlan(raw, { sessionDuration: 60, ageGroup: 'u9' })).toBeNull();
+    const unsafe = structuredClone(raw);
+    unsafe.phases[1].activities[0].description = 'Practise heading the ball';
+    unsafe.phases[1].activities[0].coachingPoints = ['Scan'];
+    expect(normalizeAiPlan(unsafe, { sessionDuration: 60, ageGroup: 'u11' })).toBeNull();
   });
   it('keeps heading points for older players', () => {
-    const p = normalizeAiPlan(raw, { sessionDuration: 60, ageGroup: 'u15' })!;
+    const p = normalizeAiPlan(raw, { sessionDuration: 60, ageGroup: 'u15' });
+    if (!p) throw new Error('Expected usable plan');
     expect(JSON.stringify(p)).toMatch(/heading/i);
   });
   it('returns null for unusable output', () => {
     expect(normalizeAiPlan({ phases: [] }, { sessionDuration: 60 })).toBeNull();
+  });
+  it('rejects fewer than four phases', () => {
+    expect(normalizeAiPlan({ ...raw, phases: raw.phases.slice(0, 3) }, { sessionDuration: 60 })).toBeNull();
   });
 });
