@@ -29,7 +29,7 @@ export default function BlockPlanner() {
       try {
         const { data, error } = await supabase.from('teams').select('*').eq('user_id', user.id);
         if (error) throw error;
-        const choices = (data || []).map(t => ({ id: t.id, input: { teamName: t.name, ageGroup: t.age_group || '', skillLevel: t.skill_level || '', playerCount: t.player_count || 12, sessionDuration: t.session_duration || 60, playingStyle: t.playing_style || '', currentFocus: t.current_focus || '' } }));
+        const choices: { id: string; input: TeamInput }[] = (data || []).map(t => ({ id: t.id, input: { teamName: t.name, ageGroup: t.age_group || '', skillLevel: t.skill_level || '', playerCount: t.player_count || 12, sessionDuration: t.session_duration || 60, playingStyle: t.playing_style || '', currentFocus: t.current_focus || '' } }));
         const source = params.get('session');
         if (source) {
           const s = await loadSession(source);

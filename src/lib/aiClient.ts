@@ -15,7 +15,9 @@ export async function adjustAiActivity(team: TeamInput, activity: Activity, adju
   }
   const parsed = adjustedActivity.safeParse(data?.activity);
   if (!parsed.success) throw new Error('The adjusted practice was incomplete. Your original is unchanged.');
-  return { ...parsed.data, duration: activity.duration };
+  const a = parsed.data;
+  return { name: a.name || activity.name, description: a.description || activity.description, setup: a.setup || activity.setup,
+    equipment: a.equipment || '', coachingPoints: a.coachingPoints || [], progressions: a.progressions || [], regressions: a.regressions || [], duration: activity.duration };
 }
 
 export async function generateAiPlan(t: TeamInput): Promise<{ plan: SessionPlan | null; error?: string; limited?: boolean }> {
