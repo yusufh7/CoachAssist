@@ -997,7 +997,7 @@ const PracticeLibrary = ({ onBack }) => {
             <TabsContent key={key} value={key} className="space-y-6">
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">{category.title} Practices</h2>
-                <p className="text-gray-600">FA principles-based training practices ({category.practices.length} available)</p>
+                <p className="text-gray-600">Practices based on the principles of play ({category.practices.length} available)</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
