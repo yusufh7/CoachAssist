@@ -145,7 +145,7 @@ ${adjusting ? `Adjustment: ${t.adjustment}\nOriginal practice: ${JSON.stringify(
     if (adjusting) {
       const checked = Activity.safeParse(plan);
       if (!checked.success || !t.activity) return json({ error: 'The adjusted practice was unusable. Your original is unchanged.' }, 502);
-      if (young && /\bhead(er|ers|ing|ed)?\b/i.test(JSON.stringify(checked.data))) return json({ error: 'The adjusted practice did not meet age safety rules. Your original is unchanged.' }, 502);
+      if (young && /\b(heading|headers?|headed)\b|\bhead\s+(the\s+)?ball\b/i.test(JSON.stringify(checked.data))) return json({ error: 'The adjusted practice did not meet age safety rules. Your original is unchanged.' }, 502);
       await admin.from('ai_generation_log').insert({ user_id: userId, ip_hash: ipHash });
       return json({ activity: { ...checked.data, duration: t.activity.duration } });
     }
