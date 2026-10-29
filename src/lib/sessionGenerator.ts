@@ -37,7 +37,7 @@ export interface SessionPlan {
   ageGroup?: string;
   skillLevel?: string;
   playerCount?: number;
-  generator: 'template';
+  generator: 'template' | 'ai';
 }
 
 /** Split `total` into integers proportional to `weights` that sum exactly to `total`. */
