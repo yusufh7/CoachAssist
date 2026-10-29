@@ -5,7 +5,7 @@ import type { Activity } from './sessionGenerator';
 import type { Adjustment } from './delivery';
 import { z } from 'zod';
 
-const adjustedActivity = z.object({ name: z.string().min(1), duration: z.number(), description: z.string().min(1), setup: z.string().min(1), equipment: z.string(), coachingPoints: z.array(z.string()), progressions: z.array(z.string()), regressions: z.array(z.string()) });
+const adjustedActivity = z.object({ name: z.string().min(1), duration: z.number(), description: z.string().min(1), setup: z.string().min(1), equipment: z.string(), coachingPoints: z.array(z.string()), progressions: z.array(z.string()), regressions: z.array(z.string()) }).passthrough();
 export async function adjustAiActivity(team: TeamInput, activity: Activity, adjustment: Adjustment, players: number): Promise<Activity> {
   const { data, error } = await supabase.functions.invoke('generate-session', { body: { ...team, action: 'adjust', activity, adjustment, playerCount: players } });
   if (error) {
@@ -16,8 +16,7 @@ export async function adjustAiActivity(team: TeamInput, activity: Activity, adju
   const parsed = adjustedActivity.safeParse(data?.activity);
   if (!parsed.success) throw new Error('The adjusted practice was incomplete. Your original is unchanged.');
   const a = parsed.data;
-  return { name: a.name || activity.name, description: a.description || activity.description, setup: a.setup || activity.setup,
-    equipment: a.equipment || '', coachingPoints: a.coachingPoints || [], progressions: a.progressions || [], regressions: a.regressions || [], duration: activity.duration };
+  return { ...a, duration: activity.duration } as Activity;
 }
 
 export async function generateAiPlan(t: TeamInput): Promise<{ plan: SessionPlan | null; error?: string; limited?: boolean }> {
@@ -26,7 +25,7 @@ export async function generateAiPlan(t: TeamInput): Promise<{ plan: SessionPlan 
     if (error) {
       let msg: string | undefined;
       let limited = false;
-      const res = (error as any).context as Response | undefined;
+      const res = (error as { context?: Response }).context;
       if (res && typeof res.json === 'function') {
         const body = await res.json().catch(() => null);
         msg = body?.error;

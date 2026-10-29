@@ -25,6 +25,8 @@ export default function BlockPlanner() {
   const [prepared, setPrepared] = useState<TeamInput[] | null>(null);
   useEffect(() => {
     if (!user) return;
+    const cached = sessionStorage.getItem(`coachassist:block:${user.id}`);
+    if (cached) { try { const state = JSON.parse(cached); setPrepared(state.prepared); setResults(state.results); setTheme(state.theme); setCount(state.count); setSelected(state.selected); } catch { sessionStorage.removeItem(`coachassist:block:${user.id}`); } }
     const load = async () => {
       try {
         const { data, error } = await supabase.from('teams').select('*').eq('user_id', user.id);
@@ -35,23 +37,26 @@ export default function BlockPlanner() {
           const s = await loadSession(source);
           if (s) { choices.unshift({ id: 'source', input: s.teamData }); setTheme(s.teamData.sessionGoals || ''); }
         }
-        setTeams(choices); setSelected(choices[0]?.id || '');
+        setTeams(choices); if (!cached) setSelected(choices[0]?.id || '');
       } catch (e) { setError(e instanceof Error ? e.message : 'Could not load teams.'); }
     }; void load();
   }, [user?.id]);
   const generate = async () => {
     if (!user) return;
     const team = teams.find(t => t.id === selected);
-    if (!team || !theme.trim()) { setError('Choose a team and enter one football theme.'); return; }
-    const inputs = prepared || blockInputs(team.input, theme.trim(), Number(count));
+    if ((!team && !prepared) || !theme.trim()) { setError('Choose a team and enter one football theme.'); return; }
+    const inputs = prepared || blockInputs(team?.input || {}, theme.trim(), Number(count));
     setPrepared(inputs); setBusy(true); setError('');
+    const completed = [...results];
+    const persist = () => sessionStorage.setItem(`coachassist:block:${user.id}`, JSON.stringify({ prepared: inputs, results: completed, theme, count, selected }));
+    persist();
     try {
       for (let i = results.length; i < inputs.length; i++) {
         const result = await generateAiPlan(inputs[i]);
         if (!result.plan) throw new Error(result.error || 'Planning paused. Your completed sessions are saved; retry to continue.');
         const title = `${theme.trim()} — Session ${i + 1} of ${inputs.length}`;
         const id = await createSession(user.id, selected === 'source' ? null : selected, inputs[i], { ...result.plan, title });
-        setResults(previous => [...previous, { id, title }]);
+        completed.push({ id, title }); setResults([...completed]); persist();
       }
     } catch (e) { setError(e instanceof Error ? e.message : 'Could not complete the block.'); } finally { setBusy(false); }
   };
@@ -66,6 +71,7 @@ export default function BlockPlanner() {
       {results.length < Number(count) && <Button size="lg" disabled={busy || !teams.length} onClick={generate}>{busy ? <><Loader2 className="animate-spin" />Planning session {Math.min(results.length + 1, Number(count))} of {count}…</> : prepared ? 'Continue planning' : 'Generate training block'}</Button>}
       <div className="divide-y divide-border">{results.map(r => <Link key={r.id} to={`/session/${r.id}`} className="flex items-center gap-3 py-4 font-semibold hover:text-primary"><CheckCircle2 className="text-primary shrink-0" />{r.title}</Link>)}</div>
       {results.length === Number(count) && <p className="text-primary font-semibold">Training block saved.</p>}
+      {prepared && !busy && <Button variant="outline" onClick={() => { sessionStorage.removeItem(`coachassist:block:${user.id}`); setPrepared(null); setResults([]); }}>Start a new block</Button>}
     </>}
   </main></div>;
 }

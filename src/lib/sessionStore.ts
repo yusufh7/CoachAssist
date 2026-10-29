@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { SessionPlan, TeamInput } from './sessionGenerator';
+import type { Json } from '@/integrations/supabase/types';
 
 export const DRAFT_ID = 'draft';
 const DRAFT_KEY = 'coachassist:draft-session';
@@ -46,7 +47,7 @@ export async function loadSession(id: string): Promise<StoredSession | null> {
 export async function createSession(userId: string, teamId: string | null, teamData: TeamInput, plan: SessionPlan) {
   const { data, error } = await supabase
     .from('training_sessions')
-    .insert({ user_id: userId, team_id: teamId, title: plan.title, team_data: teamData as any, plan: plan as any })
+    .insert({ user_id: userId, team_id: teamId, title: plan.title, team_data: teamData as unknown as Json, plan: plan as unknown as Json })
     .select('id')
     .single();
   if (error) throw error;
@@ -54,7 +55,7 @@ export async function createSession(userId: string, teamId: string | null, teamD
 }
 
 export async function updateSessionPlan(id: string, plan: SessionPlan) {
-  const { data, error } = await supabase.from('training_sessions').update({ plan: plan as any, title: plan.title }).eq('id', id).select('id').single();
+  const { data, error } = await supabase.from('training_sessions').update({ plan: plan as unknown as Json, title: plan.title }).eq('id', id).select('id').single();
   if (error) throw error;
   if (!data) throw new Error('Session not saved');
 }

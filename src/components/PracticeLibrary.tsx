@@ -6,11 +6,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Search, Play, Users, Target, Shield, Zap } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { buildSessionPlan } from '@/lib/sessionGenerator';
+import ActivityCard from '@/components/ActivityCard';
 
-const PracticeLibrary = ({ onBack }) => {
+interface PracticeSummary { id: number; title: string; description: string; duration: string; players: string; difficulty: string; category?: string }
+const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('in-possession');
-  const [selected, setSelected] = useState<any>(null);
+  const [selected, setSelected] = useState<PracticeSummary | null>(null);
 
   const practiceCategories = {
     'in-possession': {
@@ -942,25 +946,23 @@ const PracticeLibrary = ({ onBack }) => {
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
-      case 'Beginner': return 'bg-green-100 text-green-800';
-      case 'Intermediate': return 'bg-yellow-100 text-yellow-800';
-      case 'Advanced': return 'bg-red-100 text-red-800';
-      case 'All Levels': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Beginner': return 'bg-secondary text-secondary-foreground';
+      case 'Intermediate': return 'bg-warning/20 text-foreground';
+      case 'Advanced': return 'bg-destructive/10 text-destructive';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
-      <header className="bg-white/90 backdrop-blur-sm shadow-sm border-b border-green-200">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Button variant="ghost" onClick={onBack} className="hover:bg-green-50 transition-colors">
+            <Button variant="ghost" onClick={onBack}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">Practice Library</h1>
-            <div className="w-24"></div>
+            <h1 className="text-xl font-bold text-foreground">Practice library</h1>
           </div>
         </div>
       </header>
@@ -968,24 +970,27 @@ const PracticeLibrary = ({ onBack }) => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+            <Input
+              aria-label="Search practices"
               type="text"
               placeholder="Search practices..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full pl-10 h-12"
             />
           </div>
         </div>
 
         <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 bg-white shadow-sm border border-gray-200 rounded-xl p-1">
+          <TabsList className="grid w-full grid-cols-5 bg-card border border-border p-1">
             {Object.entries(practiceCategories).map(([key, category]) => (
               <TabsTrigger 
                 key={key} 
                 value={key} 
-                className="rounded-lg data-[state=active]:bg-green-500 data-[state=active]:text-white flex items-center gap-2"
+                aria-label={category.title}
+                title={category.title}
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2"
               >
                 {category.icon}
                 <span className="hidden sm:inline">{category.title}</span>
@@ -996,16 +1001,16 @@ const PracticeLibrary = ({ onBack }) => {
           {Object.entries(practiceCategories).map(([key, category]) => (
             <TabsContent key={key} value={key} className="space-y-6">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{category.title} Practices</h2>
-                <p className="text-gray-600">Practices based on the principles of play ({category.practices.length} available)</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">{category.title}</h2>
+                <p className="text-muted-foreground">Practice themes</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredPractices.map((practice) => (
-                  <Card key={practice.id} className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-green-200">
+                  <Card key={practice.id} className="hover:border-primary/40 transition-colors">
                     <CardHeader>
                       <div className="flex items-start justify-between">
-                        <div className={`w-10 h-10 bg-gradient-to-br ${category.color} rounded-lg flex items-center justify-center mb-3`}>
+                        <div className="w-10 h-10 bg-secondary text-primary rounded-md flex items-center justify-center mb-3">
                           {category.icon}
                         </div>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(practice.difficulty)}`}>
@@ -1016,7 +1021,7 @@ const PracticeLibrary = ({ onBack }) => {
                       <CardDescription>{practice.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      <div className="space-y-2 text-sm text-muted-foreground mb-4">
                         <div className="flex items-center gap-2">
                           <Users className="w-4 h-4" />
                           <span>{practice.players} players</span>
@@ -1026,7 +1031,7 @@ const PracticeLibrary = ({ onBack }) => {
                           <span>{practice.duration}</span>
                         </div>
                       </div>
-                      <Button className="w-full bg-green-500 hover:bg-green-600" onClick={() => setSelected({ ...practice, category: category.title })}>
+                      <Button className="w-full" onClick={() => setSelected({ ...practice, category: category.title })}>
                         View Practice
                       </Button>
                     </CardContent>
@@ -1038,7 +1043,7 @@ const PracticeLibrary = ({ onBack }) => {
         </Tabs>
       </main>
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           {selected && (
             <>
               <DialogHeader>
@@ -1051,7 +1056,7 @@ const PracticeLibrary = ({ onBack }) => {
                 <div><strong>Duration</strong><br />{selected.duration}</div>
                 <div><strong>Level</strong><br />{selected.difficulty}</div>
               </div>
-              <Button asChild><Link to="/plan">Plan a session around this</Link></Button>
+              <Button asChild><Link to={`/plan?goal=${encodeURIComponent(`${selected.title}: ${selected.description}`)}`}>Plan a session around this</Link></Button>
             </>
           )}
         </DialogContent>
