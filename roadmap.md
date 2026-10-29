@@ -9,9 +9,13 @@
 - [x] Phase 3: verify signed-in and anonymous delivery flows (real four-session block, persisted AI adjustment, mobile timer, trial/save prompt; physical-device wake lock not verified)
 - [ ] Phase 4: honest, shippable product
 - [x] Pre-Phase 4: full regression checks and acceptance report
-- [ ] QA follow-up: AI safety and consistent player/anonymous limits
+- [x] QA follow-up: AI safety and consistent player/anonymous limits (server validation, atomic reservation, real U9 plan saved and refreshed)
 - [ ] QA follow-up: complete practice details and carry selected practice into planning
-- [ ] QA follow-up: repeat-password/account recovery and mobile accessibility
-- [ ] QA follow-up: atomic usage accounting, edge tests, lint and block continuation persistence
+- [x] QA follow-up: repeat-password controls, recovery page and mobile category names
+- [x] QA follow-up: atomic usage accounting, edge tests, lint errors and block continuation persistence
 - [ ] New request: fix confirmed QA issues before Phase 4
-- [ ] New request: Phase 4 Touchline workspace redesign (Outfit/Figtree; green, white, charcoal and yellow)
+- [x] New request: begin Phase 4 Touchline workspace redesign (home, planning, library and session views; Outfit/Figtree)
+- [ ] Phase 4: complete library content and provenance review; entries are honestly labelled themes until verified
+- [ ] Phase 4: final policy/contact pages need operator identity, contact details and retention decisions; no legal facts invented
+- [ ] Phase 4: email confirmation/reset delivery and physical-device wake lock remain unverified
+- [ ] Phase 4: remaining accessibility, offline access and analytics audit

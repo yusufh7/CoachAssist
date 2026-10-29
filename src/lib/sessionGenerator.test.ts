@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateSessionPhases, splitMinutes, buildSessionPlan, gameFormat } from './sessionGenerator';
+import { generateSessionPhases, splitMinutes, buildSessionPlan, gameFormat, ageGameFormat, detectThemes } from './sessionGenerator';
 import { teamSetupSchema } from './validation';
 
 describe('session timing', () => {
@@ -30,6 +30,12 @@ describe('content varies with inputs', () => {
     expect(gameFormat(16)).toBe('8v8');
     expect(gameFormat(13)).toBe('6v6 + 1 floater');
   });
+  it('U9 squads larger than fourteen split into smaller games', () => {
+    expect(ageGameFormat(28, 'u9')).toBe('2 pitches: 7v7');
+  });
+  it('passing under pressure stays a passing theme, not defending', () => {
+    expect(detectThemes('Passing under pressure')).toEqual(['passing']);
+  });
 });
 
 describe('team setup validation', () => {
@@ -41,5 +47,9 @@ describe('team setup validation', () => {
   });
   it('allows blank playing style', () => {
     expect(teamSetupSchema.safeParse({ ...base, teamName: 'Eagles', playingStyle: '' }).success).toBe(true);
+  });
+  it('accepts fifty players but rejects fifty-one', () => {
+    expect(teamSetupSchema.safeParse({ ...base, teamName: 'Eagles', playerCount: 50 }).success).toBe(true);
+    expect(teamSetupSchema.safeParse({ ...base, teamName: 'Eagles', playerCount: 51 }).success).toBe(false);
   });
 });
