@@ -10,6 +10,9 @@ import TeamSetup from "./components/TeamSetup";
 import SessionPlanner from "./components/SessionPlanner";
 import PracticeLibrary from "./components/PracticeLibrary";
 import AuthPage from "./components/AuthPage";
+import CoachMode from './pages/CoachMode';
+import MySessions from './pages/MySessions';
+import BlockPlanner from './pages/BlockPlanner';
 
 const queryClient = new QueryClient();
 
@@ -33,6 +36,9 @@ const App = () => (
           <Route path="/plan" element={<TeamSetup />} />
           <Route path="/session/:id" element={<SessionPlanner />} />
           <Route path="/session/:id/print" element={<PrintSession />} />
+          <Route path="/session/:id/coach" element={<CoachMode />} />
+          <Route path="/sessions" element={<MySessions />} />
+          <Route path="/block" element={<BlockPlanner />} />
           <Route path="/library" element={<LibraryRoute />} />
           <Route path="/account" element={<AccountRoute />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
