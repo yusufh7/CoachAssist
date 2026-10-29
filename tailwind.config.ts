@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import animate from 'tailwindcss-animate';
 
 export default {
 	darkMode: ["class"],
@@ -19,7 +20,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Inter', 'system-ui', 'sans-serif'],
+                sans: ['Figtree', 'system-ui', 'sans-serif'],
+                heading: ['Outfit', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -79,7 +81,7 @@ export default {
 			},
 			boxShadow: {
 				'premium': 'var(--shadow-premium)',
-				'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
+                'glass': 'var(--shadow-md)'
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
@@ -132,5 +134,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+    plugins: [animate],
 } satisfies Config;

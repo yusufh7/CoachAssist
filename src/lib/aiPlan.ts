@@ -1,54 +1,30 @@
 import { splitMinutes, type Activity, type Phase, type SessionPlan, type TeamInput } from './sessionGenerator';
+import { hasDeliberateHeading } from './safety';
+const object = (v: unknown): Record<string, unknown> => v && typeof v === 'object' ? v as Record<string, unknown> : {};
+const list = (v: unknown): unknown[] => Array.isArray(v) ? v : [];
+const strings = (v: unknown): string[] => list(v).filter((s): s is string => typeof s === 'string' && Boolean(s.trim())).slice(0, 8);
+const string = (v: unknown, fallback = '') => typeof v === 'string' && v.trim() ? v.trim() : fallback;
+const positive = (v: unknown) => Math.max(1, Number(v) || 1);
 
-const YOUNG = ['u7', 'u9', 'u11'];
-const HEADING = /\bhead(er|ers|ing|ed)?\b/i;
-
-const strs = (v: unknown, max = 6): string[] =>
-  Array.isArray(v) ? v.filter((s) => typeof s === 'string' && s.trim()).map((s) => s.trim()).slice(0, max) : [];
-const str = (v: unknown, fallback = '') => (typeof v === 'string' && v.trim() ? v.trim() : fallback);
-const pos = (v: unknown) => Math.max(1, Number(v) || 1);
-
-/**
- * Turn raw AI output into a safe SessionPlan: exact timing (phases sum to the
- * session length, activities sum to their phase) and no heading for U11 and below.
- * Returns null if the output is unusable so the caller can fall back to templates.
- */
-export function normalizeAiPlan(raw: any, t: TeamInput): SessionPlan | null {
+export function normalizeAiPlan(raw: unknown, t: TeamInput): SessionPlan | null {
+  const data = object(raw);
+  if (['u7', 'u9', 'u11'].includes(t.ageGroup || '') && hasDeliberateHeading(data)) return null;
   const total = Number(t.sessionDuration) || 60;
-  const young = YOUNG.includes(t.ageGroup || '');
-  const rawPhases: any[] = Array.isArray(raw?.phases) ? raw.phases : [];
-  const usable = rawPhases
-    .map((p) => ({ ...p, activities: (Array.isArray(p?.activities) ? p.activities : []).filter((a: any) => str(a?.name)) }))
-    .filter((p) => str(p?.name) && p.activities.length);
-  if (usable.length < 3) return null;
-
-  const phaseMins = splitMinutes(total, usable.map((p) => pos(p.duration)));
+  const usable = list(data.phases).map(object).map(p => ({ name: p.name, duration: p.duration, activities: list(p.activities).map(object).filter(a => string(a.name)) })).filter(p => string(p.name) && p.activities.length);
+  if (usable.length < 4 || usable.length > 6 || usable.reduce((sum, p) => sum + p.activities.length, 0) > total) return null;
+  const durations = splitMinutes(total, usable.map(p => positive(p.duration)));
   const phases: Phase[] = usable.map((p, i) => {
-    const mins = splitMinutes(phaseMins[i], p.activities.map((a: any) => pos(a.duration)));
-    const activities: Activity[] = p.activities.map((a: any, j: number) => {
-      const clean = (list: string[]) => (young ? list.filter((s) => !HEADING.test(s)) : list);
-      return {
-        name: str(a.name),
-        duration: mins[j],
-        description: str(a.description),
-        setup: str(a.setup),
-        equipment: str(a.equipment),
-        coachingPoints: clean(strs(a.coachingPoints)),
-        progressions: clean(strs(a.progressions)),
-        regressions: clean(strs(a.regressions)),
-      };
-    });
-    return { name: str(p.name), duration: phaseMins[i], activities };
+    const mins = splitMinutes(durations[i], p.activities.map(a => positive(a.duration)));
+    return { name: string(p.name), duration: durations[i], activities: p.activities.map((a, j): Activity => ({
+      name: string(a.name), duration: mins[j], description: string(a.description), setup: string(a.setup), equipment: string(a.equipment),
+      coachingPoints: strings(a.coachingPoints), progressions: strings(a.progressions), regressions: strings(a.regressions),
+      format: string(a.format), rules: strings(a.rules), questions: strings(a.questions), commonErrors: strings(a.commonErrors),
+      area: a.area as Activity['area'], allocation: a.allocation as Activity['allocation'], diagram: a.diagram as Activity['diagram'],
+    })) };
   });
-
-  return {
-    title: str(raw?.title, `${(t.teamName || 'Team').trim()} Training Session`),
-    duration: total,
-    objectives: strs(raw?.objectives),
-    phases,
-    ageGroup: t.ageGroup,
-    skillLevel: t.skillLevel,
-    playerCount: Number(t.playerCount) || undefined,
-    generator: 'ai',
-  };
+  if (phases.some(p => p.activities.some(a => a.duration < 1))) return null;
+  const overview = object(data.overview);
+  return { title: string(data.title, `${t.teamName || 'Team'} Training Session`), duration: total, objectives: strings(data.objectives), phases,
+    overview: { theme: string(overview.theme, t.sessionGoals || ''), outcome: string(overview.outcome) },
+    ageGroup: t.ageGroup, skillLevel: t.skillLevel, playerCount: Number(t.playerCount) || undefined, generator: 'ai' };
 }

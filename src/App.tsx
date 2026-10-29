@@ -13,6 +13,7 @@ import AuthPage from "./components/AuthPage";
 import CoachMode from './pages/CoachMode';
 import MySessions from './pages/MySessions';
 import BlockPlanner from './pages/BlockPlanner';
+import AccountRecovery from './pages/AccountRecovery';
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/block" element={<BlockPlanner />} />
           <Route path="/library" element={<LibraryRoute />} />
           <Route path="/account" element={<AccountRoute />} />
+          <Route path="/account/recovery" element={<AccountRecovery />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

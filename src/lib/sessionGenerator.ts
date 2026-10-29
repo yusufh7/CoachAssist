@@ -2,6 +2,13 @@
 // Pure functions only, so timing rules can be unit tested.
 
 export interface Activity {
+  format?: string;
+  area?: { length: number; width: number; unit: 'metres' | 'yards' };
+  rules?: string[];
+  questions?: string[];
+  commonErrors?: string[];
+  allocation?: { active: number; rotating: number; groups: number };
+  diagram?: { players: { x: number; y: number; team: 'attack' | 'defence' | 'neutral'; label?: string }[]; cones: { x: number; y: number }[]; balls: { x: number; y: number }[]; arrows: { x: number; y: number; toX: number; toY: number; kind: 'pass' | 'run' }[] };
   name: string;
   duration: number;
   description: string;
@@ -19,6 +26,10 @@ export interface Phase {
 }
 
 export interface TeamInput {
+  pitchSize?: string;
+  equipment?: string[];
+  coachCount?: number;
+  units?: 'metres' | 'yards';
   teamName?: string;
   ageGroup?: string;
   skillLevel?: string;
@@ -30,6 +41,7 @@ export interface TeamInput {
 }
 
 export interface SessionPlan {
+  overview?: { theme: string; outcome: string };
   title: string;
   duration: number;
   objectives: string[];
@@ -60,7 +72,7 @@ type Theme = 'passing' | 'finishing' | 'dribbling' | 'defending' | 'wide' | 'tra
 const THEME_KEYWORDS: [Theme, RegExp][] = [
   ['finishing', /finish|shoot|shot|scor|goal ?scor/i],
   ['wide', /wide|cross|wing|flank|cut-?back/i],
-  ['defending', /defen|press|shape|tackl|compact|out of possession/i],
+  ['defending', /defen|pressing|high press|counter.?press|press as|shape|tackl|compact|out of possession/i],
   ['dribbling', /dribbl|1v1|one v one|run with|beat (a|the) (player|defender)|ball mastery/i],
   ['transition', /transition|counter|regain|turnover/i],
   ['possession', /possession|keep the ball|build.?up|play out/i],
@@ -175,7 +187,7 @@ function technical(theme: Theme, t: TeamInput, n: number): Omit<Activity, 'durat
 function tactical(theme: Theme, t: TeamInput, n: number): Omit<Activity, 'duration'> {
   const age = t.ageGroup || 'u11';
   const big = areaSize(age, true);
-  const fmt = gameFormat(n);
+  const fmt = ageGameFormat(n, age);
   const styleNote = t.playingStyle ? ` Linked to your ${t.playingStyle} style.` : '';
   switch (theme) {
     case 'finishing':
@@ -278,7 +290,7 @@ export function generateSessionPhases(t: TeamInput): Phase[] {
       w = [1];
     } else if (name === 'Small-Sided Game') {
       parts = [{
-        name: `Free Game (${gameFormat(n)})`,
+        name: `Free Game (${ageGameFormat(n, t.ageGroup || 'u11')})`,
         description: `Open game to apply today's work on ${themes.join(' and ')}. Light-touch coaching only.`,
         setup: `${areaSize(t.ageGroup || 'u11', true)} pitch with two goals.`,
         equipment: '2 goals, bibs, balls',
@@ -289,7 +301,7 @@ export function generateSessionPhases(t: TeamInput): Phase[] {
     } else {
       parts = [{
         name: 'Cool-Down & Review',
-        description: 'Light jog and stretches, then a short review: what went well and one thing to work on.',
+        description: YOUNG.includes(t.ageGroup || '') ? 'Walk with the ball, take a drink and share one good moment. Keep the review short and positive.' : 'Light jog and comfortable mobility, then a short review: what went well and one thing to work on.',
         setup: 'Team circle.',
         equipment: 'Water bottles',
         coachingPoints: ['Slow the heart rate gradually', 'Ask players what they learned', 'Finish on a positive'],
@@ -301,7 +313,21 @@ export function generateSessionPhases(t: TeamInput): Phase[] {
     return { name, duration: total, activities: parts.map((p, i) => ({ ...p, duration: split[i] })) };
   };
 
-  return names.map((name, i) => build(name, minutes[i]));
+  return names.map((name, i) => build(name, minutes[i])).map(phase => ({ ...phase, activities: phase.activities.map(a => {
+    const unit = t.units || 'metres';
+    const convert = (s: string) => unit === 'yards' ? s : s.replace(/(\d+)x(\d+) yards/g, (_, l, w) => `${Math.round(Number(l) * 0.9144)}x${Math.round(Number(w) * 0.9144)} metres`).replace(/(\d+) yards/g, (_, d) => `${Math.round(Number(d) * 0.9144)} metres`);
+    return { ...a, setup: convert(a.setup), description: convert(a.description) };
+  }) }));
+}
+
+export function ageGameFormat(n: number, age: string) {
+  const max = age === 'u7' ? 5 : age === 'u9' ? 7 : age === 'u11' ? 9 : 11;
+  const perGame = max * 2;
+  if (n <= perGame) return gameFormat(n);
+  const groups = Math.ceil(n / perGame);
+  const smaller = Math.floor(n / groups);
+  const spare = n % groups;
+  return `${groups} pitches: ${gameFormat(smaller)}${spare ? `; ${spare} pitch${spare > 1 ? 'es' : ''} with one extra rotating player` : ''}`;
 }
 
 export function buildSessionPlan(t: TeamInput): SessionPlan {

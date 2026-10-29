@@ -18,12 +18,16 @@ const optionalText = (max: number, label: string) =>
 
 // Raw text is stored as typed; we only trim on submit.
 export const teamSetupSchema = z.object({
+  pitchSize: optionalText(100, 'Pitch size'),
+  equipment: z.array(z.string()).max(12).optional().default(['Balls', 'Cones', 'Bibs']),
+  coachCount: z.coerce.number().int().min(1).max(10).optional().default(1),
+  units: z.enum(['metres', 'yards']).optional().default('metres'),
   teamName: z
     .string({ required_error: "Team name is required" })
     .trim()
     .min(1, "Team name is required")
     .max(100, "Team name must be 100 characters or fewer")
-    .regex(/^[\p{L}\p{N}\s.'’&()\/-]+$/u, "Use letters, numbers, spaces and . ' ’ - & ( ) / only"),
+    .regex(/^[\p{L}\p{N}\s.'’&()/-]+$/u, "Use letters, numbers, spaces and . ' ’ - & ( ) / only"),
 
   ageGroup: z.enum(["u7", "u9", "u11", "u13", "u15", "u17", "adult"], {
     errorMap: () => ({ message: "Choose an age group" }),

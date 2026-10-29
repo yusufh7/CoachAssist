@@ -25,8 +25,8 @@ const SessionExport = ({ stored, isOwner, onChange }: Props) => {
     try {
       await setSessionPublic(stored.id, value);
       onChange({ ...stored, isPublic: value });
-    } catch (e: any) {
-      toast({ title: "Couldn't change sharing", description: e.message, variant: 'destructive' });
+    } catch (e: unknown) {
+      toast({ title: "Couldn't change sharing", description: e instanceof Error ? e.message : 'Please try again.', variant: 'destructive' });
     } finally {
       setBusy(false);
     }
@@ -63,7 +63,7 @@ const SessionExport = ({ stored, isOwner, onChange }: Props) => {
       {isDraft && (
         <Button variant="outline" asChild><Link to="/account"><Share2 className="w-4 h-4 mr-2" />Sign in to share</Link></Button>
       )}
-      <Button asChild className="bg-green-600 hover:bg-green-700">
+      <Button asChild>
         <Link to={`/session/${stored.id}/print`}><Printer className="w-4 h-4 mr-2" />Print / PDF</Link>
       </Button>
     </div>

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit3 } from 'lucide-react';
 import PracticeVisualizer from '@/components/PracticeVisualizer';
+import type { Activity } from '@/lib/sessionGenerator';
 
 const ListBlock = ({ title, items }: { title: string; items?: string[] }) =>
   items && items.length ? (
@@ -14,7 +15,7 @@ const ListBlock = ({ title, items }: { title: string; items?: string[] }) =>
     </div>
   ) : null;
 
-const ActivityCard = ({ activity, phaseIndex, activityIndex, onCustomize, adjustment }: any) => (
+const ActivityCard = ({ activity, phaseIndex, activityIndex, onCustomize, adjustment }: { activity: Activity; phaseIndex: number; activityIndex: number; onCustomize?: (p: number, a: number) => void; adjustment?: React.ReactNode }) => (
   <div className="border rounded-lg p-4 sm:p-6">
     <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
       <h4 className="text-lg font-semibold">{activity.name}</h4>
@@ -46,6 +47,9 @@ const ActivityCard = ({ activity, phaseIndex, activityIndex, onCustomize, adjust
           </div>
         )}
         <ListBlock title="Key Coaching Points" items={activity.coachingPoints} />
+        <ListBlock title="Rules" items={activity.rules} />
+        <ListBlock title="Key questions" items={activity.questions} />
+        <ListBlock title="Common errors" items={activity.commonErrors} />
         <ListBlock title="Progressions" items={activity.progressions} />
         <ListBlock title="Regressions" items={activity.regressions} />
       </div>
