@@ -13,3 +13,5 @@
 - [ ] QA follow-up: complete practice details and carry selected practice into planning
 - [ ] QA follow-up: repeat-password/account recovery and mobile accessibility
 - [ ] QA follow-up: atomic usage accounting, edge tests, lint and block continuation persistence
+- [ ] New request: fix confirmed QA issues before Phase 4
+- [ ] New request: Phase 4 redesign (waiting for visual direction choice)
