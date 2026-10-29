@@ -1,8 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { blockInputs, replaceActivity, remainingSeconds } from './delivery';
+import { blockInputs, replaceActivity, remainingSeconds, canGenerateAnonymous } from './delivery';
 import { buildSessionPlan } from './sessionGenerator';
 
 describe('Phase 3 delivery rules', () => {
+  it('allows one anonymous session, not another while the trial draft exists', () => {
+    expect(canGenerateAnonymous(false)).toBe(true);
+    expect(canGenerateAnonymous(true)).toBe(false);
+  });
   it('replaces only one practice and keeps session and practice time unchanged', () => {
     const plan = buildSessionPlan({ sessionDuration: 60, playerCount: 12 });
     const next = replaceActivity(plan, 1, 0, { ...plan.phases[1].activities[0], name: 'Adjusted', duration: 99 });

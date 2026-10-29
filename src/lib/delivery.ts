@@ -2,6 +2,7 @@ import { type Activity, type SessionPlan, type TeamInput } from './sessionGenera
 
 export const ADJUSTMENTS = ['Too easy', 'Too hard', 'Fewer players', 'More players', 'Players losing focus', 'Wet pitch / less space'] as const;
 export type Adjustment = typeof ADJUSTMENTS[number];
+export function canGenerateAnonymous(hasDraft: boolean) { return !hasDraft; }
 
 export function replaceActivity(plan: SessionPlan, pi: number, ai: number, activity: Activity): SessionPlan {
   const previous = plan.phases[pi]?.activities[ai];

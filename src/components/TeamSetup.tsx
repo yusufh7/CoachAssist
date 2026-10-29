@@ -14,6 +14,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { buildSessionPlan } from '@/lib/sessionGenerator';
 import { generateAiPlan } from '@/lib/aiClient';
 import { createSession, saveDraft, loadDraft, DRAFT_ID } from '@/lib/sessionStore';
+import { canGenerateAnonymous } from '@/lib/delivery';
 
 const EMPTY = {
   teamName: '', ageGroup: '', skillLevel: '', playingStyle: '',
@@ -69,7 +70,7 @@ const TeamSetup = () => {
     setErrors({});
     setFormError('');
 
-    if (!user && loadDraft()) {
+    if (!user && !canGenerateAnonymous(Boolean(loadDraft()))) {
       navigate(`/session/${DRAFT_ID}`);
       toast({ title: 'Your trial session is ready', description: 'Sign up to save it and plan more sessions.' });
       return;
