@@ -1,0 +1,9 @@
+import { validateGeneratedPlan, deliberateHeading } from './validation.ts';
+const assert = (condition: boolean, message: string) => { if (!condition) throw new Error(message); };
+const plan = () => ({ phases: [10, 20, 20, 10].map(duration => ({ duration, activities: [{ duration, format: '4v4', allocation: { active: 8, groups: 1, rotating: 1 }, area: { unit: 'metres' }, diagram: { players: Array(8).fill({}) } }] })) });
+Deno.test('60 minutes and nine players including rotation accepted', () => { assert(validateGeneratedPlan(plan(), 60, 9, 'u9', 'metres').length === 0, 'Expected valid plan'); });
+Deno.test('wrong time rejected', () => { assert(validateGeneratedPlan(plan(), 45, 9, 'u9', 'metres').includes('Phase durations must equal session duration'), 'Expected timing error'); });
+Deno.test('unaccounted player rejected', () => { assert(validateGeneratedPlan(plan(), 60, 10, 'u9', 'metres').includes('Allocation must account for every player'), 'Expected allocation error'); });
+Deno.test('wrong units rejected', () => { assert(validateGeneratedPlan(plan(), 60, 9, 'u9', 'yards').includes('Use the selected units'), 'Expected units error'); });
+Deno.test('U9 game larger than 7v7 rejected', () => { const p = plan(); p.phases[0].activities[0].format = '8v8'; assert(validateGeneratedPlan(p, 60, 9, 'u9', 'metres').includes('Format exceeds the age-group maximum'), 'Expected format error'); });
+Deno.test('heading in descriptions detected but head-up scanning allowed', () => { assert(deliberateHeading({ description: 'Head the ball' }), 'Expected unsafe heading'); assert(!deliberateHeading('Head up; no heading'), 'Scanning should be allowed'); });
