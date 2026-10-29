@@ -72,7 +72,7 @@ type Theme = 'passing' | 'finishing' | 'dribbling' | 'defending' | 'wide' | 'tra
 const THEME_KEYWORDS: [Theme, RegExp][] = [
   ['finishing', /finish|shoot|shot|scor|goal ?scor/i],
   ['wide', /wide|cross|wing|flank|cut-?back/i],
-  ['defending', /defen|press|shape|tackl|compact|out of possession/i],
+  ['defending', /defen|pressing|high press|counter.?press|press as|shape|tackl|compact|out of possession/i],
   ['dribbling', /dribbl|1v1|one v one|run with|beat (a|the) (player|defender)|ball mastery/i],
   ['transition', /transition|counter|regain|turnover/i],
   ['possession', /possession|keep the ball|build.?up|play out/i],

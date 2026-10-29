@@ -358,7 +358,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                           </div>
                         )}
                       </div>
-                      <div><Label htmlFor="confirmPassword">Repeat password</Label><Input id="confirmPassword" type="password" autoComplete="new-password" required value={signupData.confirmPassword} onChange={e => setSignupData(prev => ({ ...prev, confirmPassword: e.target.value }))} /></div>
+                      <div><Label htmlFor="confirmPassword">Repeat password</Label><Input id="confirmPassword" type="password" autoComplete="new-password" aria-invalid={Boolean(signupData.confirmPassword && signupData.password !== signupData.confirmPassword)} required value={signupData.confirmPassword} onChange={e => setSignupData(prev => ({ ...prev, confirmPassword: e.target.value }))} />{signupData.confirmPassword && signupData.password !== signupData.confirmPassword && <p role="alert" className="text-sm text-destructive mt-1">Passwords must match.</p>}</div>
                       <Button type="submit" className="w-full">
                         Create Account
                       </Button>

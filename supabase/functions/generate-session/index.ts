@@ -153,7 +153,7 @@ ${adjusting ? `Adjustment: ${t.adjustment}\nOriginal practice: ${JSON.stringify(
       system,
       prompt: prompt + repair,
       output: Output.object({ schema: adjusting ? Activity : PlanSchema }),
-      abortSignal: AbortSignal.any([req.signal, AbortSignal.timeout(90000)]),
+      abortSignal: AbortSignal.any([req.signal, AbortSignal.timeout(180000)]),
       providerOptions: {
         openai: {
           forceReasoning: true,
@@ -190,7 +190,7 @@ ${adjusting ? `Adjustment: ${t.adjustment}\nOriginal practice: ${JSON.stringify(
     if (NoObjectGeneratedError.isInstance(err)) return json({ error: "The AI returned an unusable plan" }, 502);
     const detail = err as { statusCode?: number; message?: string };
     const status = Number(detail.statusCode) || 500;
-    console.error("generate-session failed", status);
+    console.error("generate-session failed", status, err instanceof Error ? err.name : 'UnknownError');
     if (status === 402) return json({ error: "AI credits have run out", code: "credits" }, 402);
     if (status === 429) return json({ error: "AI is busy right now, please try again shortly", code: "busy" }, 429);
     if (status === 403) return json({ error: 'AI access denied' }, 403);
