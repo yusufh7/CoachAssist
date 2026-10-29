@@ -1,7 +1,7 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { createOpenAI } from "npm:@ai-sdk/openai@3";
-import { streamText, Output, NoObjectGeneratedError } from "npm:ai@6";
+import { generateText, Output, NoObjectGeneratedError } from "npm:ai@6";
 import { z } from "npm:zod@3.25.76";
 import { createLovableAiGatewayRunIdFetch, getLovableAiGatewayRunId } from "./run-id.ts";
 import { deliberateHeading, validateGeneratedPlan } from './validation.ts';
@@ -148,7 +148,7 @@ ${adjusting ? `Adjustment: ${t.adjustment}\nOriginal practice: ${JSON.stringify(
   try {
     let repair = '';
     for (let attempt = 0; attempt < 2; attempt++) {
-    const result = streamText({
+    const result = await generateText({
       model: provider.responses(MODEL),
       system,
       prompt: prompt + repair,
@@ -158,13 +158,13 @@ ${adjusting ? `Adjustment: ${t.adjustment}\nOriginal practice: ${JSON.stringify(
         openai: {
           forceReasoning: true,
           reasoningEffort: "low",
-          reasoningSummary: "auto",
+
           store: false,
-          include: ["reasoning.encrypted_content"],
+
         },
       },
     });
-    const plan = await result.output;
+    const plan = result.output;
     if (adjusting) {
       const checked = Activity.safeParse(plan);
       if (!checked.success || !t.activity) return json({ error: 'The adjusted practice was unusable. Your original is unchanged.' }, 502);
