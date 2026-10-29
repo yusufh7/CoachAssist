@@ -8,7 +8,7 @@
 @layer base {
   :root {
     /* Core Brand Colors */
-    --primary: 142 76% 36%; /* Football Green */
+    --primary: 151 72% 28%;
     --primary-foreground: 0 0% 100%;
     --primary-hover: 142 76% 32%;
     --primary-light: 142 76% 45%;
@@ -16,7 +16,7 @@
     
     /* Surface Colors */
     --background: 0 0% 99%;
-    --foreground: 220 13% 9%;
+    --foreground: 147 16% 11%;
     --card: 0 0% 100%;
     --card-foreground: 220 13% 9%;
     
@@ -29,8 +29,8 @@
     /* Status Colors */
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 46 86% 62%;
+    --warning-foreground: 147 16% 11%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
@@ -54,22 +54,24 @@
     --shadow-premium: 0 25px 50px -12px hsl(142 76% 36% / 0.25);
     
     /* Typography */
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     
     /* Layout */
-    --radius: 0.75rem;
+    --radius: 0.5rem;
+    --popover: 0 0% 100%;
+    --popover-foreground: 147 16% 11%;
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 147 16% 11%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-foreground: 0 0% 100%;
 
     --sidebar-primary: 240 5.9% 10%;
 
     --sidebar-primary-foreground: 0 0% 98%;
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent: 147 16% 20%;
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-accent-foreground: 0 0% 100%;
 
     --sidebar-border: 220 13% 91%;
 
@@ -77,6 +79,8 @@
   }
 
   .dark {
+    --popover: 147 16% 15%;
+    --popover-foreground: 0 0% 98%;
     /* Core Brand Colors */
     --primary: 142 76% 45%;
     --primary-foreground: 220 13% 9%;
@@ -150,6 +154,8 @@
   html {
     scroll-behavior: smooth;
   }
+  h1, h2, h3, h4 { font-family: 'Outfit', var(--font-sans); letter-spacing: 0; }
+  :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 3px; }
 }
 
 @layer components {
@@ -276,4 +282,14 @@
   .print-page { max-width: none; padding: 0; }
   .print-phase { break-inside: avoid; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+.pitch-surface { fill: hsl(var(--secondary)); stroke: hsl(var(--primary)); }
+.pitch-attack { fill: hsl(var(--primary)); }
+.pitch-defence { fill: hsl(var(--destructive)); }
+.pitch-neutral { fill: hsl(var(--warning)); }
+.pitch-ball { fill: hsl(var(--foreground)); }
+.pitch-arrow { stroke: hsl(var(--foreground)); fill: none; }
+.pitch-label { fill: hsl(var(--primary-foreground)); font-size: 8px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
