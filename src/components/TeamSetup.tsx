@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { buildSessionPlan } from '@/lib/sessionGenerator';
+import { generateAiPlan } from '@/lib/aiClient';
 import { createSession, saveDraft, DRAFT_ID } from '@/lib/sessionStore';
 
 const EMPTY = {
@@ -86,7 +87,13 @@ const TeamSetup = () => {
 
     setIsSubmitting(true);
     const data = parsed.data;
-    const plan = buildSessionPlan(data);
+    let plan = buildSessionPlan(data);
+    const ai = await generateAiPlan(data);
+    if (ai.plan) {
+      plan = ai.plan;
+    } else {
+      toast({ title: "Using a template session", description: ai.error ?? "The AI couldn't build this one, so here's a ready-made plan instead.", variant: ai.limited ? "destructive" : undefined });
+    }
 
     if (!user) {
       saveDraft(data, plan);
