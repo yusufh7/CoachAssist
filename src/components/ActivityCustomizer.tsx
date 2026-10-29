@@ -14,7 +14,8 @@ const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
     description: activity.description,
     setup: activity.setup,
     coachingPoints: activity.coachingPoints.join('\n'),
-    progressions: activity.progressions ? activity.progressions.join('\n') : ''
+    progressions: activity.progressions ? activity.progressions.join('\n') : '',
+    regressions: activity.regressions ? activity.regressions.join('\n') : ''
   });
 
   const handleSubmit = (e) => {
@@ -22,11 +23,12 @@ const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
     const updatedActivity = {
       ...activity,
       name: formData.name,
-      duration: parseInt(formData.duration),
+      duration: Math.max(1, parseInt(formData.duration) || 1),
       description: formData.description,
       setup: formData.setup,
       coachingPoints: formData.coachingPoints.split('\n').filter(point => point.trim()),
-      progressions: formData.progressions ? formData.progressions.split('\n').filter(prog => prog.trim()) : undefined
+      progressions: formData.progressions.split('\n').filter(p => p.trim()),
+      regressions: formData.regressions.split('\n').filter(p => p.trim())
     };
     onSave(updatedActivity);
   };
@@ -44,7 +46,7 @@ const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Session
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">Customize Activity</h1>
+            <h1 className="text-xl font-bold text-gray-900">Customise Activity</h1>
             <div />
           </div>
         </div>
@@ -122,6 +124,16 @@ const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
                   onChange={(e) => updateFormData('progressions', e.target.value)}
                   rows={3}
                   placeholder="Enter each progression on a new line"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="regressions">Regressions (one per line, optional)</Label>
+                <Textarea
+                  id="regressions"
+                  value={formData.regressions}
+                  onChange={(e) => updateFormData('regressions', e.target.value)}
+                  rows={3}
                 />
               </div>
 

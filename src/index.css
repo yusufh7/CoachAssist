@@ -271,3 +271,10 @@
 ::selection {
   @apply bg-primary/20 text-primary-foreground;
 }
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; }
+  .print-page { max-width: none; padding: 0; }
+  .print-phase { break-inside: avoid; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

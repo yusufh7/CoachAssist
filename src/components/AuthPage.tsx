@@ -3,7 +3,8 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { SecureInput } from '@/components/ui/secure-input';
+import { Input } from '@/components/ui/input';
+import { Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
@@ -37,6 +38,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
   });
   const [userProfile, setUserProfile] = useState<any>(null);
   const [userTeams, setUserTeams] = useState<any[]>([]);
+  const [userSessions, setUserSessions] = useState<any[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -107,6 +109,9 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
       }
 
       setUserTeams(data || []);
+      const res = await supabase.from('training_sessions').select('id,title,created_at,is_public')
+        .eq('user_id', userId).order('created_at', { ascending: false }).limit(50);
+      if (!res.error) setUserSessions(res.data || []);
     } catch (error) {
       console.error('Error fetching teams:', error);
     }
@@ -139,10 +144,8 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
     }
 
     try {
-      console.log('Starting signup process for:', signupData.email);
       
       const redirectUrl = `${window.location.origin}/`;
-      console.log('Redirect URL:', redirectUrl);
       
       const { data, error } = await supabase.auth.signUp({
         email: signupData.email,
@@ -155,14 +158,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
         }
       });
 
-      console.log('Signup response:', { data, error });
-
       if (error) {
-        console.error('Signup error details:', {
-          message: error.message,
-          status: error.status,
-          details: error
-        });
         
         // Handle specific Supabase error types
         let errorMessage = error.message;
@@ -187,8 +183,6 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
         });
         return;
       }
-
-      console.log('Signup successful:', data);
 
       toast({
         title: "Account Created!",
@@ -304,7 +298,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                     <form onSubmit={handleSignUpSubmit} className="space-y-4">
                       <div>
                         <Label htmlFor="displayName">Display Name</Label>
-                        <SecureInput
+                        <Input
                           id="displayName"
                           type="text"
                           placeholder="Your name"
@@ -316,7 +310,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                       </div>
                       <div>
                         <Label htmlFor="email">Email</Label>
-                        <SecureInput
+                        <Input
                           id="email"
                           type="email"
                           placeholder="coach@example.com"
@@ -325,9 +319,9 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                           required
                         />
                       </div>
-                      <div>
+                      <div className="relative">
                         <Label htmlFor="password">Password</Label>
-                        <SecureInput
+                        <Input
                           id="password"
                           type={showPassword ? "text" : "password"}
                           placeholder="Create a strong password"
@@ -384,7 +378,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                     <form onSubmit={handleLogin} className="space-y-4">
                       <div>
                         <Label htmlFor="loginEmail">Email</Label>
-                        <SecureInput
+                        <Input
                           id="loginEmail"
                           type="email"
                           placeholder="coach@example.com"
@@ -395,7 +389,7 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
                       </div>
                       <div>
                         <Label htmlFor="loginPassword">Password</Label>
-                        <SecureInput
+                        <Input
                           id="loginPassword"
                           type="password"
                           placeholder="Your password"
@@ -547,15 +541,30 @@ const AuthPage = ({ onBack }: AuthPageProps) => {
             </TabsContent>
 
             <TabsContent value="sessions">
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Training Sessions</h3>
-                  <p className="text-muted-foreground text-center">
-                    Your saved training sessions will appear here
-                  </p>
-                </CardContent>
-              </Card>
+              {userSessions.length === 0 ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">No sessions yet</h3>
+                    <Button asChild className="mt-2"><Link to="/plan">Plan a session</Link></Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-3">
+                  {userSessions.map((s) => (
+                    <Link key={s.id} to={`/session/${s.id}`} className="block">
+                      <Card className="hover:border-primary transition-colors">
+                        <CardHeader className="py-4">
+                          <CardTitle className="text-base">{s.title}</CardTitle>
+                          <CardDescription>
+                            {new Date(s.created_at).toLocaleDateString()} {s.is_public ? '• Shared' : ''}
+                          </CardDescription>
+                        </CardHeader>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>

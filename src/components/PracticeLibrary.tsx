@@ -3,11 +3,14 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Link } from "react-router-dom";
 import { ArrowLeft, Search, Play, Users, Target, Shield, Zap } from 'lucide-react';
 
 const PracticeLibrary = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('in-possession');
+  const [selected, setSelected] = useState<any>(null);
 
   const practiceCategories = {
     'in-possession': {
@@ -994,7 +997,7 @@ const PracticeLibrary = ({ onBack }) => {
             <TabsContent key={key} value={key} className="space-y-6">
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">{category.title} Practices</h2>
-                <p className="text-gray-600">FA principles-based training practices ({category.practices.length} available)</p>
+                <p className="text-gray-600">Practices based on the principles of play ({category.practices.length} available)</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1023,7 +1026,7 @@ const PracticeLibrary = ({ onBack }) => {
                           <span>{practice.duration}</span>
                         </div>
                       </div>
-                      <Button className="w-full bg-green-500 hover:bg-green-600">
+                      <Button className="w-full bg-green-500 hover:bg-green-600" onClick={() => setSelected({ ...practice, category: category.title })}>
                         View Practice
                       </Button>
                     </CardContent>
@@ -1034,6 +1037,25 @@ const PracticeLibrary = ({ onBack }) => {
           ))}
         </Tabs>
       </main>
+      <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
+        <DialogContent>
+          {selected && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selected.title}</DialogTitle>
+                <DialogDescription>{selected.category}</DialogDescription>
+              </DialogHeader>
+              <p className="text-sm">{selected.description}</p>
+              <div className="grid grid-cols-3 gap-3 text-sm">
+                <div><strong>Players</strong><br />{selected.players}</div>
+                <div><strong>Duration</strong><br />{selected.duration}</div>
+                <div><strong>Level</strong><br />{selected.difficulty}</div>
+              </div>
+              <Button asChild><Link to="/plan">Plan a session around this</Link></Button>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
