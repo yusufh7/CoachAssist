@@ -946,7 +946,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
     switch (difficulty) {
       case 'Beginner': return 'bg-secondary text-secondary-foreground';
       case 'Intermediate': return 'bg-warning/20 text-foreground';
-      case 'Advanced': return 'bg-destructive/10 text-destructive';
+      case 'Advanced': return 'bg-foreground text-background';
       default: return 'bg-muted text-muted-foreground';
     }
   };
@@ -958,7 +958,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
           <div className="flex items-center justify-between h-16">
             <Button variant="ghost" onClick={onBack}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              Back
             </Button>
             <h1 className="text-xl font-bold text-foreground">Practice library</h1>
           </div>
@@ -998,9 +998,9 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
 
           {Object.entries(practiceCategories).map(([key, category]) => (
             <TabsContent key={key} value={key} className="space-y-6">
-              <div className="text-center mb-6">
+              <div className="mb-2">
                 <h2 className="text-2xl font-bold text-foreground mb-2">{category.title}</h2>
-                <p className="text-muted-foreground">Practice themes</p>
+                <p className="text-muted-foreground">Choose a theme to see its practices, or plan a session straight from it.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1029,9 +1029,10 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
                           <span>{practice.duration}</span>
                         </div>
                       </div>
-                      <Button className="w-full" onClick={() => setSelected({ ...practice, category: category.title })}>
-                        View theme
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button variant="outline" className="flex-1" onClick={() => setSelected({ ...practice, category: category.title })}>View details</Button>
+                        <Button asChild variant="ghost" className="flex-1 text-primary"><Link to={`/plan?goal=${encodeURIComponent(`${practice.title}: ${practice.description}`)}`}>Plan with this</Link></Button>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
