@@ -1,3 +1,4 @@
+import { maxSide } from './ageGroups';
 // Deterministic, rule-based session generator (template fallback).
 // Pure functions only, so timing rules can be unit tested.
 
@@ -85,11 +86,11 @@ export function detectThemes(goals: string, focus = ''): Theme[] {
   return found.length ? found : ['passing'];
 }
 
-const YOUNG = ['u7', 'u9'];
+const YOUNG = ['u7', 'u8', 'u9', 'u10'];
 
 function areaSize(ageGroup: string, big: boolean) {
   if (YOUNG.includes(ageGroup)) return big ? '30x20 yards' : '15x15 yards';
-  if (ageGroup === 'u11') return big ? '40x30 yards' : '20x20 yards';
+  if (ageGroup === 'u11' || ageGroup === 'u12') return big ? '40x30 yards' : '20x20 yards';
   return big ? '50x40 yards' : '25x20 yards';
 }
 
@@ -321,7 +322,7 @@ export function generateSessionPhases(t: TeamInput): Phase[] {
 }
 
 export function ageGameFormat(n: number, age: string) {
-  const max = age === 'u7' ? 5 : age === 'u9' ? 7 : age === 'u11' ? 9 : 11;
+  const max = maxSide(age);
   const perGame = max * 2;
   if (n <= perGame) return gameFormat(n);
   const groups = Math.ceil(n / perGame);

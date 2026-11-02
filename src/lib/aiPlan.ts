@@ -1,3 +1,4 @@
+import { noHeadingAge } from './ageGroups';
 import { splitMinutes, type Activity, type Phase, type SessionPlan, type TeamInput } from './sessionGenerator';
 import { hasDeliberateHeading } from './safety';
 const object = (v: unknown): Record<string, unknown> => v && typeof v === 'object' ? v as Record<string, unknown> : {};
@@ -8,7 +9,7 @@ const positive = (v: unknown) => Math.max(1, Number(v) || 1);
 
 export function normalizeAiPlan(raw: unknown, t: TeamInput): SessionPlan | null {
   const data = object(raw);
-  if (['u7', 'u9', 'u11'].includes(t.ageGroup || '') && hasDeliberateHeading(data)) return null;
+  if (noHeadingAge(t.ageGroup || 'u11') && hasDeliberateHeading(data)) return null;
   const total = Number(t.sessionDuration) || 60;
   const usable = list(data.phases).map(object).map(p => ({ name: p.name, duration: p.duration, activities: list(p.activities).map(object).filter(a => string(a.name)) })).filter(p => string(p.name) && p.activities.length);
   if (usable.length < 4 || usable.length > 6 || usable.reduce((sum, p) => sum + p.activities.length, 0) > total) return null;

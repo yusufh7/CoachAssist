@@ -1,3 +1,4 @@
+import { AGE_GROUPS } from './ageGroups';
 import { z } from "zod";
 
 /** Escape text for any context where it is injected as raw HTML (React already escapes JSX). */
@@ -29,7 +30,7 @@ export const teamSetupSchema = z.object({
     .max(100, "Team name must be 100 characters or fewer")
     .regex(/^[\p{L}\p{N}\s.'’&()/-]+$/u, "Use letters, numbers, spaces and . ' ’ - & ( ) / only"),
 
-  ageGroup: z.enum(["u7", "u9", "u11", "u13", "u15", "u17", "adult"], {
+  ageGroup: z.enum(AGE_GROUPS, {
     errorMap: () => ({ message: "Choose an age group" }),
   }),
 

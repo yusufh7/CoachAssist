@@ -1,3 +1,4 @@
+import { SAFEGUARDING } from '@/lib/safety';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -93,7 +94,7 @@ const PrintSession = () => {
       ))}
 
       <footer className="text-xs text-muted-foreground text-center border-t border-border pt-4">
-        Adapt activities to your players, the weather and your facilities.
+        {SAFEGUARDING}
       </footer>
     </div>
   );
