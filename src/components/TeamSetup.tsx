@@ -1,3 +1,4 @@
+import GenerationStage from './GenerationStage';
 import { AGE_GROUPS, ageLabel } from '@/lib/ageGroups';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -299,7 +300,7 @@ const TeamSetup = () => {
               )}
 
               <Button type="submit" className="w-full whitespace-normal min-h-12" disabled={isSubmitting}>
-                {isSubmitting ? "Planning your session…" : "Generate training session"}
+                {isSubmitting ? <GenerationStage /> : "Generate training session"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </form>
