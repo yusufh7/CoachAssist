@@ -1,3 +1,5 @@
+import GenerationStage from './GenerationStage';
+import { AGE_GROUPS, ageLabel } from '@/lib/ageGroups';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -207,13 +209,7 @@ const TeamSetup = () => {
                   <Select value={formData.ageGroup} onValueChange={(v) => update('ageGroup', v)}>
                     <SelectTrigger id="ageGroup" className={`bg-background ${errCls('ageGroup')}`}><SelectValue placeholder="Select age group" /></SelectTrigger>
                     <SelectContent className="bg-background border border-border z-50">
-                      <SelectItem value="u7">Under 7s</SelectItem>
-                      <SelectItem value="u9">Under 9s</SelectItem>
-                      <SelectItem value="u11">Under 11s</SelectItem>
-                      <SelectItem value="u13">Under 13s</SelectItem>
-                      <SelectItem value="u15">Under 15s</SelectItem>
-                      <SelectItem value="u17">Under 17s</SelectItem>
-                      <SelectItem value="adult">Adult</SelectItem>
+                      {AGE_GROUPS.map(a => <SelectItem key={a} value={a}>{ageLabel(a)}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   <FieldError msg={errors.ageGroup} />
@@ -275,6 +271,14 @@ const TeamSetup = () => {
                   placeholder="e.g. Improve passing under pressure, finishing from wide areas"
                   onChange={(e) => update('sessionGoals', e.target.value)} className={errCls('sessionGoals')} />
                 <p className="text-xs text-muted-foreground mt-1">{formData.sessionGoals.length}/500 characters</p>
+                <div className="flex flex-wrap gap-2 mt-2" aria-label="Quick themes">
+                  {['Passing', 'Dribbling', '1v1 defending', 'Finishing', 'Pressing', 'Playing out from the back', 'Transitions', 'Fun and enjoyment'].map(theme => (
+                    <Button key={theme} type="button" size="sm" variant="outline" className="rounded-full h-8"
+                      onClick={() => { const cur = formData.sessionGoals.trim(); if (!cur.toLowerCase().includes(theme.toLowerCase())) update('sessionGoals', (cur ? `${cur}, ${theme.toLowerCase()}` : theme).slice(0, 500)); }}>
+                      + {theme}
+                    </Button>
+                  ))}
+                </div>
                 <FieldError msg={errors.sessionGoals} />
               </div>
 
@@ -296,7 +300,7 @@ const TeamSetup = () => {
               )}
 
               <Button type="submit" className="w-full whitespace-normal min-h-12" disabled={isSubmitting}>
-                {isSubmitting ? "Planning your session…" : "Generate training session"}
+                {isSubmitting ? <GenerationStage /> : "Generate training session"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </form>

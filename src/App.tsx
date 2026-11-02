@@ -1,20 +1,22 @@
+import { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import PrintSession from "./pages/PrintSession";
-import TeamSetup from "./components/TeamSetup";
-import SessionPlanner from "./components/SessionPlanner";
-import PracticeLibrary from "./components/PracticeLibrary";
-import AuthPage from "./components/AuthPage";
-import CoachMode from './pages/CoachMode';
-import MySessions from './pages/MySessions';
-import BlockPlanner from './pages/BlockPlanner';
-import AccountRecovery from './pages/AccountRecovery';
+const Index = lazy(() => import('./pages/Index'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const PrintSession = lazy(() => import('./pages/PrintSession'));
+const TeamSetup = lazy(() => import('./components/TeamSetup'));
+const SessionPlanner = lazy(() => import('./components/SessionPlanner'));
+const PracticeLibrary = lazy(() => import('./components/PracticeLibrary'));
+const AuthPage = lazy(() => import('./components/AuthPage'));
+const CoachMode = lazy(() => import('./pages/CoachMode'));
+const MySessions = lazy(() => import('./pages/MySessions'));
+const BlockPlanner = lazy(() => import('./pages/BlockPlanner'));
+const AccountRecovery = lazy(() => import('./pages/AccountRecovery'));
 
+const Legal = lazy(() => import('./pages/Legal'));
 const queryClient = new QueryClient();
 
 const LibraryRoute = () => {
@@ -32,6 +34,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <Suspense fallback={<p className="p-8 text-muted-foreground">Loading…</p>}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/plan" element={<TeamSetup />} />
@@ -43,9 +46,12 @@ const App = () => (
           <Route path="/library" element={<LibraryRoute />} />
           <Route path="/account" element={<AccountRoute />} />
           <Route path="/account/recovery" element={<AccountRecovery />} />
+          <Route path="/privacy" element={<Legal kind="privacy" />} />
+          <Route path="/terms" element={<Legal kind="terms" />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

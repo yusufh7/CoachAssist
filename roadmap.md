@@ -19,3 +19,6 @@
 - [ ] Phase 4: final policy/contact pages need operator identity, contact details and retention decisions; no legal facts invented
 - [ ] Phase 4: email confirmation/reset delivery and physical-device wake lock remain unverified
 - [ ] Phase 4: remaining accessibility, offline access and analytics audit
+- [x] Fix heading false-positive and avoid slow second AI attempts; every age group U7–U18 + adult
+- [x] Theme chips, generation stages, print disclaimer, privacy/terms pages and footer, route code-splitting
+- [ ] Privacy-friendly analytics events (needs decision on what to store)

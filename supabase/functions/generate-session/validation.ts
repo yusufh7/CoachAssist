@@ -1,5 +1,10 @@
+const years = (a: string) => a === 'adult' ? 99 : Number(a.slice(1)) || 11;
+export const maxSideFor = (a: string) => { const n = years(a); return n <= 8 ? 5 : n <= 10 ? 7 : n <= 12 ? 9 : 11; };
+export const noHeadingAge = (a: string) => years(a) <= 12;
 export function deliberateHeading(value: unknown): boolean {
-  const text = JSON.stringify(value).replace(/\b(no|avoid|without|never|do not|don't)\s+(deliberate\s+)?heading\b/gi, '');
+  const text = JSON.stringify(value)
+    .replace(/\b(no|avoid|avoiding|without|never|not|don't|nor|ban|banned|prohibit\w*)\b[^.;!?\n"]{0,60}?\b(heading|headers?)\b/gi, '')
+    .replace(/\b(heading|headers?)\b[^.;!?\n"]{0,25}?\b(not allowed|banned|prohibited|forbidden|off limits)\b/gi, '');
   return /\b(heading|headers?|headed)\b|\bhead\s+(the\s+)?ball\b/i.test(text);
 }
 interface Practice { duration: number; format?: string; allocation?: { active: number; rotating: number; groups: number }; area?: { unit: string }; diagram?: { players: unknown[] } }
@@ -7,7 +12,7 @@ export function validateGeneratedPlan(plan: { phases: { duration: number; activi
   const errors: string[] = [];
   if (plan.phases.length < 4 || plan.phases.length > 6) errors.push('Use 4–6 phases');
   if (plan.phases.reduce((s, p) => s + p.duration, 0) !== duration) errors.push('Phase durations must equal session duration');
-  const maxSide = age === 'u7' ? 5 : age === 'u9' ? 7 : age === 'u11' ? 9 : 11;
+  const maxSide = maxSideFor(age);
   for (const phase of plan.phases) {
     if (phase.activities.reduce((s, a) => s + a.duration, 0) !== phase.duration) errors.push('Activity durations must equal phase duration');
     for (const a of phase.activities) {
@@ -19,6 +24,6 @@ export function validateGeneratedPlan(plan: { phases: { duration: number; activi
       for (const match of (a.format || '').matchAll(/(\d+)\s*v\s*(\d+)/gi)) if (Number(match[1]) > maxSide || Number(match[2]) > maxSide) errors.push('Format exceeds the age-group maximum');
     }
   }
-  if (['u7', 'u9', 'u11'].includes(age) && deliberateHeading(plan)) errors.push('No deliberate heading for U11 and below');
+  if (noHeadingAge(age) && deliberateHeading(plan)) errors.push('No deliberate heading for U12 and below');
   return [...new Set(errors)];
 }

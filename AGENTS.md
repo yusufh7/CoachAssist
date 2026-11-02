@@ -12,3 +12,4 @@
 - Diagrams render canonical activity coordinates, never guessed layouts based on names; why: coaches must not see misleading player arrangements.
 - The home route is a recent-session workspace using WorkspaceNav; why: daily coaching work takes priority over marketing.
 - Password checks are pure shared functions, with a dedicated recovery route; why: signup and reset must enforce consistent requirements.
+- Age groups, FA match formats and the no-heading age live in `src/lib/ageGroups.ts` (mirrored in the edge function's validation.ts); why: one rule set for forms, templates and AI checks.
