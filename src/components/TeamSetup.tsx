@@ -169,9 +169,10 @@ const TeamSetup = () => {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <section className="max-w-2xl mx-auto">
           <div className="mb-8">
-            <CardTitle className="text-2xl text-center">Set Up Your Training Session</CardTitle>
-            <CardDescription className="text-center">
-              Tell us about your team so we can build a session plan
+            <p className="text-sm text-primary font-medium mb-2">PLAN A SESSION</p>
+            <CardTitle className="text-3xl sm:text-4xl font-semibold">Who are you coaching today?</CardTitle>
+            <CardDescription className="mt-2 text-base">
+              Tell us about your players and what you want to work on
             </CardDescription>
           </div>
           <div>
@@ -198,14 +199,14 @@ const TeamSetup = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="teamName">Team Name</Label>
+                  <Label htmlFor="teamName">Team name</Label>
                   <Input id="teamName" placeholder="e.g. St. Mary's U12s" value={formData.teamName}
                     onChange={(e) => update('teamName', e.target.value)} maxLength={100} className={errCls('teamName')} />
                   <FieldError msg={errors.teamName} />
                 </div>
 
                 <div>
-                  <Label htmlFor="ageGroup">Age Group</Label>
+                  <Label htmlFor="ageGroup">Age group</Label>
                   <Select value={formData.ageGroup} onValueChange={(v) => update('ageGroup', v)}>
                     <SelectTrigger id="ageGroup" className={`bg-background ${errCls('ageGroup')}`}><SelectValue placeholder="Select age group" /></SelectTrigger>
                     <SelectContent className="bg-background border border-border z-50">
@@ -216,7 +217,7 @@ const TeamSetup = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="skillLevel">Skill Level</Label>
+                  <Label htmlFor="skillLevel">Skill level</Label>
                   <Select value={formData.skillLevel} onValueChange={(v) => update('skillLevel', v)}>
                     <SelectTrigger id="skillLevel" className={`bg-background ${errCls('skillLevel')}`}><SelectValue placeholder="Select skill level" /></SelectTrigger>
                     <SelectContent className="bg-background border border-border z-50">
@@ -231,14 +232,14 @@ const TeamSetup = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="playerCount">Number of Players</Label>
+                  <Label htmlFor="playerCount">Number of players</Label>
                   <Input id="playerCount" type="number" inputMode="numeric" placeholder="e.g. 16" min={1} max={50}
                     value={formData.playerCount} onChange={(e) => update('playerCount', e.target.value)} className={errCls('playerCount')} />
                   <FieldError msg={errors.playerCount} />
                 </div>
 
                 <div>
-                  <Label htmlFor="sessionDuration">Session Duration</Label>
+                  <Label htmlFor="sessionDuration">Session length</Label>
                   <Select value={formData.sessionDuration} onValueChange={(v) => update('sessionDuration', v)}>
                     <SelectTrigger id="sessionDuration" className={`bg-background ${errCls('sessionDuration')}`}><SelectValue placeholder="Select duration" /></SelectTrigger>
                     <SelectContent className="bg-background border border-border z-50">
@@ -249,7 +250,7 @@ const TeamSetup = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="playingStyle">Playing Style (optional)</Label>
+                  <Label htmlFor="playingStyle">Playing style (optional)</Label>
                   <Select value={formData.playingStyle || NO_STYLE} onValueChange={(v) => update('playingStyle', v === NO_STYLE ? '' : v)}>
                     <SelectTrigger id="playingStyle" className="bg-background"><SelectValue placeholder="Select playing style" /></SelectTrigger>
                     <SelectContent className="bg-background border border-border z-50">
@@ -266,7 +267,7 @@ const TeamSetup = () => {
               </div>
 
               <div>
-                <Label htmlFor="sessionGoals">Session Goals</Label>
+                <Label htmlFor="sessionGoals">What do you want to work on?</Label>
                 <Textarea id="sessionGoals" maxLength={500} value={formData.sessionGoals}
                   placeholder="e.g. Improve passing under pressure, finishing from wide areas"
                   onChange={(e) => update('sessionGoals', e.target.value)} className={errCls('sessionGoals')} />
@@ -285,7 +286,7 @@ const TeamSetup = () => {
               <div className="grid sm:grid-cols-2 gap-6"><div><Label htmlFor="pitchSize">Pitch available (optional)</Label><Input id="pitchSize" placeholder="e.g. 30 × 20, half pitch" value={formData.pitchSize} onChange={e => update('pitchSize', e.target.value)} /></div><div><Label htmlFor="coachCount">Number of coaches</Label><Input id="coachCount" type="number" min={1} max={10} value={formData.coachCount} onChange={e => update('coachCount', e.target.value)} /><FieldError msg={errors.coachCount} /></div><div><Label htmlFor="units">Units</Label><Select value={formData.units} onValueChange={v => update('units', v)}><SelectTrigger id="units"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="metres">Metres</SelectItem><SelectItem value="yards">Yards</SelectItem></SelectContent></Select></div><fieldset><legend className="text-sm font-medium mb-2">Equipment available</legend><div className="flex flex-wrap gap-3">{['Balls','Cones','Bibs','Goals','Mini goals'].map(item => <label key={item} className="flex gap-2 items-center text-sm"><input type="checkbox" checked={formData.equipment.includes(item)} onChange={e => setFormData(p => ({ ...p, equipment: e.target.checked ? [...p.equipment, item] : p.equipment.filter(x => x !== item) }))} />{item}</label>)}</div></fieldset></div>
 
               <div>
-                <Label htmlFor="currentFocus">Current Team Focus Areas (optional)</Label>
+                <Label htmlFor="currentFocus">Anything else to know? (optional)</Label>
                 <Textarea id="currentFocus" maxLength={500} value={formData.currentFocus}
                   placeholder="e.g. First touch under pressure, communication in defensive transitions"
                   onChange={(e) => update('currentFocus', e.target.value)} className={errCls('currentFocus')} />
@@ -299,10 +300,10 @@ const TeamSetup = () => {
                 </p>
               )}
 
-              <Button type="submit" className="w-full whitespace-normal min-h-12" disabled={isSubmitting}>
+              <div className="sticky bottom-0 -mx-4 px-4 py-3 bg-background/95 backdrop-blur border-t border-border sm:static sm:mx-0 sm:p-0 sm:border-0 sm:bg-transparent"><Button type="submit" className="w-full whitespace-normal min-h-12" disabled={isSubmitting}>
                 {isSubmitting ? <GenerationStage /> : "Generate training session"}
                 <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+              </Button></div>
             </form>
           </div>
         </section>
