@@ -9,7 +9,7 @@ import SessionExport from '@/components/SessionExport';
 import ActivityCustomizer from '@/components/ActivityCustomizer';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { recomputeDurations, type SessionPlan } from '@/lib/sessionGenerator';
+import { recomputeDurations, type SessionPlan, type Activity } from '@/lib/sessionGenerator';
 import { DRAFT_ID, loadSession, saveDraft, updateSessionPlan, createSession, type StoredSession } from '@/lib/sessionStore';
 import QuickAdjust from './QuickAdjust';
 import { replaceActivity } from '@/lib/delivery';
@@ -44,7 +44,7 @@ const SessionPlanner = () => {
   const isDraft = id === DRAFT_ID;
   const isOwner = isDraft || (!!user && stored?.userId === user.id);
 
-  const handleSave = async (updatedActivity) => {
+  const handleSave = async (updatedActivity: Activity) => {
     if (!stored || !customizing) return;
     const plan: SessionPlan = structuredClone(stored.plan);
     plan.phases[customizing.phaseIndex].activities[customizing.activityIndex] = updatedActivity;
@@ -57,6 +57,7 @@ const SessionPlanner = () => {
       toast({ title: 'Changes saved' });
     } catch (e: unknown) {
       toast({ title: "Changes not saved", description: e instanceof Error ? e.message : 'Please try again.', variant: 'destructive' });
+      throw e;
     }
   };
 

@@ -2,17 +2,24 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Search, Play, Users, Target, Shield, Zap } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AGE_GROUPS, ageLabel } from '@/lib/ageGroups';
+import { matchesPractice, type PracticeSummary } from '@/lib/practiceFilters';
 
-interface PracticeSummary { id: number; title: string; description: string; duration: string; players: string; difficulty: string; category?: string }
 const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('in-possession');
   const [selected, setSelected] = useState<PracticeSummary | null>(null);
+  const [players, setPlayers] = useState('');
+  const [minutes, setMinutes] = useState('all');
+  const [difficulty, setDifficulty] = useState('all');
+  const [age, setAge] = useState('all');
 
   const practiceCategories = {
     'in-possession': {
@@ -937,10 +944,13 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
     }
   };
 
-  const filteredPractices = practiceCategories[selectedCategory].practices.filter(practice =>
-    practice.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    practice.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filters = { query: searchTerm, players, minutes, difficulty, age };
+  const searching = Boolean(searchTerm.trim());
+  const categories = Object.entries(practiceCategories);
+  const visibleCategories = searching ? categories : categories.filter(([key]) => key === selectedCategory);
+  const groups = visibleCategories.map(([key, category]) => ({ key, category, practices: category.practices.filter(practice => matchesPractice(practice, filters)) }));
+  const resultCount = groups.reduce((total, group) => total + group.practices.length, 0);
+  const resetFilters = () => { setSearchTerm(''); setPlayers(''); setMinutes('all'); setDifficulty('all'); setAge('all'); };
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -966,7 +976,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
+        <div className="mb-6 space-y-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <Input
@@ -978,33 +988,37 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
               className="w-full pl-10 h-12"
             />
           </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="space-y-2"><Label htmlFor="practice-players">Players</Label><Input id="practice-players" type="number" min={1} max={50} placeholder="Any number" value={players} onChange={e => setPlayers(e.target.value)} /></div>
+            <div className="space-y-2"><Label htmlFor="practice-minutes">Time available</Label><Select value={minutes} onValueChange={setMinutes}><SelectTrigger id="practice-minutes"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Any duration</SelectItem>{[15,20,25,30,40].map(n => <SelectItem key={n} value={String(n)}>Up to {n} minutes</SelectItem>)}</SelectContent></Select></div>
+            <div className="space-y-2"><Label htmlFor="practice-level">Level</Label><Select value={difficulty} onValueChange={setDifficulty}><SelectTrigger id="practice-level"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All levels</SelectItem>{['Beginner','Intermediate','Advanced'].map(level => <SelectItem key={level} value={level}>{level}</SelectItem>)}</SelectContent></Select></div>
+            <div className="space-y-2"><Label htmlFor="practice-age">Age group</Label><Select value={age} onValueChange={setAge}><SelectTrigger id="practice-age"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All ages</SelectItem>{AGE_GROUPS.map(a => <SelectItem key={a} value={a}>{ageLabel(a)}</SelectItem>)}</SelectContent></Select></div>
+          </div>
         </div>
 
         <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 bg-card border border-border p-1">
+          <div className="overflow-x-auto"><TabsList className="inline-flex min-w-full w-max h-auto justify-start bg-card border border-border p-1">
             {Object.entries(practiceCategories).map(([key, category]) => (
               <TabsTrigger 
                 key={key} 
                 value={key} 
                 aria-label={category.title}
                 title={category.title}
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 min-h-11"
               >
                 {category.icon}
-                <span className="hidden sm:inline">{category.title}</span>
+                <span>{category.title}</span>
               </TabsTrigger>
             ))}
-          </TabsList>
+          </TabsList></div>
 
-          {Object.entries(practiceCategories).map(([key, category]) => (
-            <TabsContent key={key} value={key} className="space-y-6">
-              <div className="mb-2">
-                <h2 className="text-2xl font-bold text-foreground mb-2">{category.title}</h2>
-                <p className="text-muted-foreground">Choose a theme to see its practices, or plan a session straight from it.</p>
-              </div>
-
+          <div className="flex items-center justify-between gap-3"><p role="status" className="text-sm text-muted-foreground">{resultCount} {resultCount === 1 ? 'theme' : 'themes'}{searching ? ' across all categories' : ''}</p><Button variant="ghost" onClick={resetFilters}>Clear filters</Button></div>
+          {!resultCount && <div className="border-y border-border py-12 space-y-3"><h2 className="text-xl font-semibold">No matching themes</h2><Button variant="outline" onClick={resetFilters}>Reset search and filters</Button></div>}
+          {groups.filter(group => group.practices.length).map(({ key, category, practices }) => (
+            <section key={key} className="space-y-6" aria-label={category.title}>
+              <h2 className="text-2xl font-bold text-foreground">{category.title}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredPractices.map((practice) => (
+                {practices.map((practice) => (
                   <Card key={practice.id} className="hover:border-primary/40 transition-colors">
                     <CardHeader>
                       <div className="flex items-start justify-between">
@@ -1037,7 +1051,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
                   </Card>
                 ))}
               </div>
-            </TabsContent>
+            </section>
           ))}
         </Tabs>
       </main>
@@ -1047,7 +1061,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
             <>
               <DialogHeader>
                 <DialogTitle>{selected.title}</DialogTitle>
-                <DialogDescription>{selected.category}</DialogDescription>
+                <DialogDescription>{selected.category} · Session theme</DialogDescription>
               </DialogHeader>
               <p className="text-sm">{selected.description}</p>
               <div className="grid grid-cols-3 gap-3 text-sm">
@@ -1055,6 +1069,7 @@ const PracticeLibrary = ({ onBack }: { onBack: () => void }) => {
                 <div><strong>Duration</strong><br />{selected.duration}</div>
                 <div><strong>Level</strong><br />{selected.difficulty}</div>
               </div>
+              {/heading|headers/i.test(`${selected.title} ${selected.description}`) && <p className="text-sm text-destructive">No deliberate heading in training for Under 12s and below. For older players, follow current governing-body heading guidance.</p>}
               <Button asChild><Link to={`/plan?goal=${encodeURIComponent(`${selected.title}: ${selected.description}`)}`}>Plan a session around this</Link></Button>
             </>
           )}

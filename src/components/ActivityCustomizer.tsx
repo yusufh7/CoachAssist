@@ -1,16 +1,21 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Save } from 'lucide-react';
+import type { Activity } from '@/lib/sessionGenerator';
+import { reconcileActivityLayout } from '@/lib/activityEdit';
 
-const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
+interface Props { activity: Activity; onSave: (activity: Activity) => Promise<void>; onCancel: () => void }
+const ActivityCustomizer = ({ activity, onSave, onCancel }: Props) => {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     name: activity.name,
-    duration: activity.duration,
+    duration: String(activity.duration),
     description: activity.description,
     setup: activity.setup,
     coachingPoints: activity.coachingPoints.join('\n'),
@@ -18,50 +23,56 @@ const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
     regressions: activity.regressions ? activity.regressions.join('\n') : ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const duration = Number(formData.duration);
+    if (!Number.isInteger(duration) || duration < 1 || duration > 120) { setError('Choose a whole number of minutes from 1 to 120.'); return; }
+    if (![formData.name, formData.description, formData.setup, formData.coachingPoints].every(value => value.trim())) { setError('Complete the practice name, description, set up and coaching points.'); return; }
+    setSaving(true); setError('');
     const updatedActivity = {
       ...activity,
       name: formData.name,
-      duration: Math.max(1, parseInt(formData.duration) || 1),
+      duration,
       description: formData.description,
       setup: formData.setup,
       coachingPoints: formData.coachingPoints.split('\n').filter(point => point.trim()),
       progressions: formData.progressions.split('\n').filter(p => p.trim()),
       regressions: formData.regressions.split('\n').filter(p => p.trim())
     };
-    onSave(updatedActivity);
+    try { await onSave(reconcileActivityLayout(activity, updatedActivity)); }
+    catch { setError('Changes could not be saved. Please try again.'); }
+    finally { setSaving(false); }
   };
 
-  const updateFormData = (field, value) => {
+  const updateFormData = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
-      <header className="bg-white shadow-sm border-b border-green-200">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Button variant="ghost" onClick={onCancel}>
+          <div className="flex flex-wrap items-center justify-between min-h-16 py-3 gap-3">
+            <Button variant="ghost" onClick={onCancel} disabled={saving}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Session
+              Back
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">Customise Activity</h1>
+            <h1 className="text-xl font-bold text-foreground">Edit practice</h1>
             <div />
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
+        <section>
           <CardHeader>
-            <CardTitle>Edit: {activity.name}</CardTitle>
+            <CardTitle>{activity.name}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="name">Activity Name</Label>
+                  <Label htmlFor="name">Practice name</Label>
                   <Input
                     id="name"
                     value={formData.name}
@@ -75,6 +86,9 @@ const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
                   <Input
                     id="duration"
                     type="number"
+                    min={1}
+                    max={120}
+                    step={1}
                     value={formData.duration}
                     onChange={(e) => updateFormData('duration', e.target.value)}
                     required
@@ -94,7 +108,7 @@ const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
               </div>
 
               <div>
-                <Label htmlFor="setup">Setup</Label>
+                  <Label htmlFor="setup">Set up</Label>
                 <Textarea
                   id="setup"
                   value={formData.setup}
@@ -105,7 +119,7 @@ const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
               </div>
 
               <div>
-                <Label htmlFor="coachingPoints">Key Coaching Points (one per line)</Label>
+                  <Label htmlFor="coachingPoints">Coaching points (one per line)</Label>
                 <Textarea
                   id="coachingPoints"
                   value={formData.coachingPoints}
@@ -137,18 +151,19 @@ const ActivityCustomizer = ({ activity, onSave, onCancel }) => {
                 />
               </div>
 
-              <div className="flex space-x-4">
-                <Button type="submit" className="bg-green-600 hover:bg-green-700">
+              {error && <p role="alert" className="text-destructive">{error}</p>}
+              <div className="flex gap-4">
+                <Button type="submit" disabled={saving}>
                   <Save className="w-4 h-4 mr-2" />
-                  Save Changes
+                  {saving ? 'Saving…' : 'Save changes'}
                 </Button>
-                <Button type="button" variant="outline" onClick={onCancel}>
+                <Button type="button" variant="outline" onClick={onCancel} disabled={saving}>
                   Cancel
                 </Button>
               </div>
             </form>
           </CardContent>
-        </Card>
+        </section>
       </main>
     </div>
   );

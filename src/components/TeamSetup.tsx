@@ -2,7 +2,7 @@ import GenerationStage from './GenerationStage';
 import { AGE_GROUPS, ageLabel } from '@/lib/ageGroups';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardDescription, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,12 +18,8 @@ import { generateAiPlan } from '@/lib/aiClient';
 import { createSession, saveDraft, loadDraft, DRAFT_ID } from '@/lib/sessionStore';
 import { canGenerateAnonymous } from '@/lib/delivery';
 import type { Database } from '@/integrations/supabase/types';
+import { EMPTY_PLANNING_FORM as EMPTY, formFromTeam, planningFormKey, restorePlanningForm } from '@/lib/planningForm';
 
-const EMPTY = {
-  pitchSize: '', coachCount: '1', units: 'metres', equipment: ['Balls', 'Cones', 'Bibs'],
-  teamName: '', ageGroup: '', skillLevel: '', playingStyle: '',
-  sessionGoals: '', sessionDuration: '', playerCount: '', currentFocus: '',
-};
 const NEW_TEAM = '__new__';
 const NO_STYLE = '__none__';
 
@@ -38,7 +34,7 @@ const FieldError = ({ msg }: { msg?: string }) =>
 const TeamSetup = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [params] = useSearchParams();
   const [formData, setFormData] = useState({ ...EMPTY, sessionGoals: params.get('goal') || '' });
   const [teams, setTeams] = useState<Database['public']['Tables']['teams']['Row'][]>([]);
@@ -46,6 +42,29 @@ const TeamSetup = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState('');
+  const [restoredKey, setRestoredKey] = useState('');
+  const storageKey = planningFormKey(user?.id);
+  const goal = params.get('goal') || '';
+
+  useEffect(() => {
+    if (authLoading) return;
+    let raw: string | null = null;
+    try { raw = sessionStorage.getItem(storageKey); } catch { /* Storage can be unavailable. */ }
+    const restored = restorePlanningForm(raw, goal);
+    setFormData(restored.form);
+    setTeamId(restored.teamId);
+    setRestoredKey(storageKey);
+  }, [authLoading, storageKey, goal]);
+
+  useEffect(() => {
+    if (authLoading || restoredKey !== storageKey || isSubmitting) return;
+    try { sessionStorage.setItem(storageKey, JSON.stringify({ form: formData, teamId })); } catch { /* Keep form usable without storage. */ }
+  }, [formData, teamId, authLoading, restoredKey, storageKey, isSubmitting]);
+
+  const clearUnfinished = () => {
+    setRestoredKey('');
+    try { sessionStorage.removeItem(storageKey); } catch { /* Session remains saved. */ }
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -58,16 +77,12 @@ const TeamSetup = () => {
 
   const pickTeam = (id: string) => {
     setTeamId(id);
-    if (id === NEW_TEAM) { setFormData(EMPTY); return; }
+    if (id === NEW_TEAM) { setFormData({ ...EMPTY, sessionGoals: formData.sessionGoals }); setErrors({}); return; }
     const t = teams.find((x) => x.id === id);
     if (!t) return;
-    setFormData({
-      ...EMPTY,
-      teamName: t.name ?? '', ageGroup: t.age_group ?? '', skillLevel: t.skill_level ?? '',
-      playingStyle: t.playing_style ?? '', sessionGoals: t.goals ?? '',
-      sessionDuration: t.session_duration ? String(t.session_duration) : '',
-      playerCount: t.player_count ? String(t.player_count) : '', currentFocus: t.current_focus ?? '',
-    });
+    setFormData(formFromTeam({ teamName: t.name ?? '', ageGroup: t.age_group ?? '', skillLevel: t.skill_level ?? '',
+      playingStyle: t.playing_style ?? '', sessionDuration: t.session_duration ?? undefined,
+      playerCount: t.player_count ?? undefined, currentFocus: t.current_focus ?? '' }, formData.sessionGoals || t.goals || ''));
     setErrors({});
   };
 
@@ -92,6 +107,8 @@ const TeamSetup = () => {
       const fe: Record<string, string> = {};
       parsed.error.errors.forEach((err) => { if (err.path[0] && !fe[err.path[0]]) fe[err.path[0] as string] = err.message; });
       setErrors(fe);
+      const firstField = Object.keys(fe)[0];
+      document.getElementById(firstField)?.focus();
       const msg = `Please fix ${Object.keys(fe).length} field${Object.keys(fe).length > 1 ? 's' : ''} below.`;
       setFormError(msg);
       toast({ title: "Check the form", description: msg, variant: "destructive" });
@@ -110,6 +127,7 @@ const TeamSetup = () => {
 
     if (!user) {
       saveDraft(data, plan);
+      clearUnfinished();
       setIsSubmitting(false);
       navigate(`/session/${DRAFT_ID}`);
       return;
@@ -134,9 +152,11 @@ const TeamSetup = () => {
 
     try {
       const id = await createSession(user.id, savedTeamId, data, plan);
+      clearUnfinished();
       navigate(`/session/${id}`);
     } catch (err: unknown) {
       saveDraft(data, plan);
+      clearUnfinished();
       toast({ title: "Session not saved", description: `${err instanceof Error ? err.message : 'Unknown error'}. It's kept on this device for now.`, variant: "destructive" });
       navigate(`/session/${DRAFT_ID}`);
     } finally {
@@ -185,9 +205,9 @@ const TeamSetup = () => {
 
               {user && teams.length > 0 && (
                 <div>
-                  <Label>Team</Label>
+                  <Label htmlFor="saved-team">Team</Label>
                   <Select value={teamId} onValueChange={pickTeam}>
-                    <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                    <SelectTrigger id="saved-team" className="bg-background"><SelectValue /></SelectTrigger>
                     <SelectContent className="bg-background border border-border z-50">
                       <SelectItem value={NEW_TEAM}>+ New team</SelectItem>
                       {teams.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
@@ -300,7 +320,7 @@ const TeamSetup = () => {
                 </p>
               )}
 
-              <div className="sticky bottom-0 -mx-4 px-4 py-3 bg-background/95 backdrop-blur border-t border-border sm:static sm:mx-0 sm:p-0 sm:border-0 sm:bg-transparent"><Button type="submit" className="w-full whitespace-normal min-h-12" disabled={isSubmitting}>
+              <div className="sticky bottom-0 -mx-4 px-4 py-3 bg-background/95 backdrop-blur border-t border-border sm:static sm:mx-0 sm:p-0 sm:border-0 sm:bg-transparent"><Button type="submit" className="w-full whitespace-normal min-h-12" disabled={isSubmitting || authLoading}>
                 {isSubmitting ? <GenerationStage /> : "Generate training session"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button></div>

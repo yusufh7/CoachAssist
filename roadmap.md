@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Current request: full automated and signed-in end-to-end review, including generation, saving, editing, sharing, print, timer, library and block planning
+- [ ] Current request: implement and retest evidence-led usability improvements
+
 - [x] Phase 1: fix broken behaviour
 - [ ] Phase 2: real generation works; QA found missing intake fields, diagrams and server-side safety/format validation
 - [x] Phase 3: pitchside Coach Mode and countdown with wake lock

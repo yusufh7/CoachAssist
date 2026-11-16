@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 
-const STAGES = ['Reading your team details…', 'Choosing practices…', 'Setting timings and groups…', 'Running safety checks…', 'Nearly there — finishing your plan…'];
-
 export default function GenerationStage() {
-  const [i, setI] = useState(0);
+  const [seconds, setSeconds] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setI(n => Math.min(n + 1, STAGES.length - 1)), 12000);
+    const started = Date.now();
+    const id = setInterval(() => setSeconds(Math.floor((Date.now() - started) / 1000)), 1000);
     return () => clearInterval(id);
   }, []);
-  return <span aria-live="polite">{STAGES[i]}</span>;
+  return <span className="flex flex-wrap justify-center gap-x-2"><span role="status">{seconds < 60 ? 'Planning your session…' : 'Still planning your session…'}</span><span className="tabular-nums" aria-label={`${seconds} seconds elapsed`}>{seconds}s</span></span>;
 }

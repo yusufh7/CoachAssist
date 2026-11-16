@@ -7,6 +7,7 @@ import { useCountdown } from '@/hooks/useCountdown';
 import { coachingScript, replaceActivity } from '@/lib/delivery';
 import { DRAFT_ID } from '@/lib/sessionStore';
 import QuickAdjust from '@/components/QuickAdjust';
+import PracticeVisualizer from '@/components/PracticeVisualizer';
 
 export default function CoachMode() {
   const { id = DRAFT_ID } = useParams();
@@ -27,11 +28,13 @@ export default function CoachMode() {
     <main className="max-w-4xl mx-auto px-4 py-6 sm:py-10 space-y-7">
       <div><p className="text-primary font-semibold mb-2">{block.phase}</p><h1 className="text-3xl sm:text-4xl font-bold break-words">{a.name}</h1></div>
       <section className="border-y border-border py-6 flex flex-wrap items-center justify-between gap-5" aria-label="Practice timer">
-        <div><div className={`text-6xl sm:text-7xl font-bold tabular-nums ${timer.seconds === 0 ? 'text-primary' : ''}`} role="timer">{String(Math.floor(timer.seconds / 60)).padStart(2, '0')}:{String(timer.seconds % 60).padStart(2, '0')}</div>
+        <div><div className={`text-6xl sm:text-7xl font-bold tabular-nums ${timer.running ? 'text-warning-foreground bg-warning rounded-md px-3 py-1' : timer.seconds === 0 ? 'text-primary' : ''}`} role="timer">{String(Math.floor(timer.seconds / 60)).padStart(2, '0')}:{String(timer.seconds % 60).padStart(2, '0')}</div>
           <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">{timer.seconds === 0 ? <><CheckCircle2 className="w-4 h-4" />Practice complete</> : timer.awake ? <><Sun className="w-4 h-4" />Screen staying awake</> : `${a.duration} minute practice`}</p></div>
         <div className="flex gap-2"><Button size="lg" className="min-w-28" onClick={timer.toggle} disabled={timer.seconds === 0}>{timer.running ? <Pause /> : <Play />}{timer.running ? 'Pause' : 'Start'}</Button><Button variant="outline" size="icon" className="w-11 h-11" title="Reset timer" aria-label="Reset timer" onClick={timer.reset}><RotateCcw /></Button></div>
       </section>
       <section className="space-y-3"><h2 className="text-xl font-semibold">Set up</h2><p className="text-lg leading-relaxed">{a.setup}</p><p className="text-muted-foreground">{a.equipment}</p></section>
+      {a.diagram && <section className="max-w-lg"><PracticeVisualizer activity={a} /></section>}
+      {!!a.rules?.length && <section className="space-y-3"><h2 className="text-xl font-semibold">Rules</h2><ul className="list-disc pl-5 space-y-2 text-lg">{a.rules.map((rule, i) => <li key={i}>{rule}</li>)}</ul></section>}
       <section className="space-y-4"><h2 className="text-xl font-semibold">What to say</h2>{Object.entries(script).map(([label, text]) => <div key={label} className="border-l-4 border-primary pl-4"><h3 className="text-sm font-bold uppercase text-primary mb-1">{label}</h3><p className="text-lg leading-relaxed">{text}</p></div>)}</section>
       <section><h2 className="text-xl font-semibold mb-3">Watch for</h2><ul className="list-disc pl-5 space-y-2 text-lg">{a.coachingPoints.map((point, i) => <li key={i}>{point}</li>)}</ul></section>
       {isOwner && <QuickAdjust key={`${index}:${a.name}`} activity={a} team={stored.teamData} onSave={updated => persist(replaceActivity(stored.plan, block.pi, block.ai, updated))} />}
