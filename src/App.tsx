@@ -14,6 +14,7 @@ const AuthPage = lazy(() => import('./components/AuthPage'));
 const CoachMode = lazy(() => import('./pages/CoachMode'));
 const MySessions = lazy(() => import('./pages/MySessions'));
 const BlockPlanner = lazy(() => import('./pages/BlockPlanner'));
+const Journal = lazy(() => import('./pages/Journal'));
 const AccountRecovery = lazy(() => import('./pages/AccountRecovery'));
 
 const Legal = lazy(() => import('./pages/Legal'));
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/session/:id/coach" element={<CoachMode />} />
           <Route path="/sessions" element={<MySessions />} />
           <Route path="/block" element={<BlockPlanner />} />
+          <Route path="/journal" element={<Journal />} />
           <Route path="/library" element={<LibraryRoute />} />
           <Route path="/account" element={<AccountRoute />} />
           <Route path="/account/recovery" element={<AccountRecovery />} />

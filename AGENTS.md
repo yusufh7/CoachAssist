@@ -16,3 +16,4 @@
 - Unfinished planning forms use account-scoped sessionStorage and pure restoration helpers; why: back/refresh retains raw inputs without mixing accounts or overwriting a selected library goal.
 - Practice filtering is pure and tested; unverified themes have no invented age suitability, and youth filtering excludes heading using the shared age rule; why: filters must not imply unverified safety claims.
 - Manual practice layout edits invalidate coordinates, area and allocation through a tested helper; why: old diagrams must never imply an edited organisation is accurate.
+- Session reflections live in `session_reflections` (one per session per coach, owner-only RLS) with validation in `src/lib/reflections.ts`; why: debriefs feed goal measurement and must stay private.

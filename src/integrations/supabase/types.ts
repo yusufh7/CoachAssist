@@ -59,6 +59,53 @@ export type Database = {
         }
         Relationships: []
       }
+      session_reflections: {
+        Row: {
+          created_at: string
+          delivered_on: string
+          id: string
+          player_notes: string
+          rating: number
+          session_id: string
+          to_change: string
+          updated_at: string
+          user_id: string
+          went_well: string
+        }
+        Insert: {
+          created_at?: string
+          delivered_on?: string
+          id?: string
+          player_notes?: string
+          rating: number
+          session_id: string
+          to_change?: string
+          updated_at?: string
+          user_id: string
+          went_well?: string
+        }
+        Update: {
+          created_at?: string
+          delivered_on?: string
+          id?: string
+          player_notes?: string
+          rating?: number
+          session_id?: string
+          to_change?: string
+          updated_at?: string
+          user_id?: string
+          went_well?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_reflections_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "training_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teams: {
         Row: {
           age_group: string | null

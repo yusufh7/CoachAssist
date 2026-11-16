@@ -13,6 +13,7 @@ import { recomputeDurations, type SessionPlan, type Activity } from '@/lib/sessi
 import { DRAFT_ID, loadSession, saveDraft, updateSessionPlan, createSession, type StoredSession } from '@/lib/sessionStore';
 import QuickAdjust from './QuickAdjust';
 import { replaceActivity } from '@/lib/delivery';
+import SessionReflection from './SessionReflection';
 import { SAFEGUARDING } from '@/lib/safety';
 
 const slug = (s: string, i: number) => `${i}-${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
@@ -154,6 +155,7 @@ const SessionPlanner = () => {
             </TabsContent>
           ))}
         </Tabs>
+        {!isDraft && user && stored.userId === user.id && <SessionReflection userId={user.id} sessionId={stored.id} />}
         <p className="text-xs text-muted-foreground mt-10 border-t border-border pt-5">{SAFEGUARDING}</p>
       </main>
     </div>
