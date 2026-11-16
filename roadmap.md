@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Current request: full automated and signed-in end-to-end review, including generation, saving, editing, sharing, print, timer, library and block planning
-- [ ] Current request: implement and retest evidence-led usability improvements
+- [x] Current request: automated and signed-in end-to-end review of real generation, saving, editing, sharing, print, timer, library and four-session block; email delivery and physical-device checks remain unverified
+- [x] Current request: implement and retest global library search/filters, raw form recovery, selected-theme preservation, honest elapsed generation status, safer editing, and Coach Mode diagrams/rules
 
 - [x] Phase 1: fix broken behaviour
 - [ ] Phase 2: real generation works; QA found missing intake fields, diagrams and server-side safety/format validation

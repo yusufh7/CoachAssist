@@ -19,4 +19,8 @@ describe('Unfinished planning recovery', () => {
     expect(planningFormKey()).not.toBe(planningFormKey('one'));
     expect(restorePlanningForm('{bad').form).toEqual(EMPTY_PLANNING_FORM);
   });
+  it('preserves edits to a library goal on refresh of the same planning link', () => {
+    const raw = JSON.stringify({ form: { ...EMPTY_PLANNING_FORM, sessionGoals: 'Passing with an extra finishing focus' }, teamId: 'team', sourceGoal: 'Passing' });
+    expect(restorePlanningForm(raw, 'Passing').form.sessionGoals).toBe('Passing with an extra finishing focus');
+  });
 });

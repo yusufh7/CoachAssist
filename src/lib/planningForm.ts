@@ -16,13 +16,14 @@ const savedForm = z.object({
     sessionGoals: z.string(), sessionDuration: z.string(), playerCount: z.string(), currentFocus: z.string(),
   }),
   teamId: z.string(),
+  sourceGoal: z.string().optional(),
 });
 
 export function restorePlanningForm(raw: string | null, goal = ''): { form: PlanningForm; teamId: string } {
   let saved: z.infer<typeof savedForm> | undefined;
   try { saved = savedForm.parse(JSON.parse(raw || 'null')); } catch { /* Start fresh when storage is invalid. */ }
   return {
-    form: { ...EMPTY_PLANNING_FORM, ...saved?.form, ...(goal ? { sessionGoals: goal.slice(0, 500) } : {}) },
+    form: { ...EMPTY_PLANNING_FORM, ...saved?.form, ...(goal && saved?.sourceGoal !== goal ? { sessionGoals: goal.slice(0, 500) } : {}) },
     teamId: saved?.teamId || '__new__',
   };
 }

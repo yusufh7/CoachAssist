@@ -58,8 +58,8 @@ const TeamSetup = () => {
 
   useEffect(() => {
     if (authLoading || restoredKey !== storageKey || isSubmitting) return;
-    try { sessionStorage.setItem(storageKey, JSON.stringify({ form: formData, teamId })); } catch { /* Keep form usable without storage. */ }
-  }, [formData, teamId, authLoading, restoredKey, storageKey, isSubmitting]);
+    try { sessionStorage.setItem(storageKey, JSON.stringify({ form: formData, teamId, sourceGoal: goal })); } catch { /* Keep form usable without storage. */ }
+  }, [formData, teamId, authLoading, restoredKey, storageKey, isSubmitting, goal]);
 
   const clearUnfinished = () => {
     setRestoredKey('');
